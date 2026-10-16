@@ -2,6 +2,8 @@
 
 ## Latest Changes
 
+## 1.2.3 (2026-10-16)
+
 ### Internal
 
 * 🔧 Update GitHub owner name. PR [#90](https://github.com/matblack81/fastapi-validation-override/pull/90) by [@matblack81](https://github.com/matblack81).
