@@ -1,10 +1,10 @@
 # FastAPI Validation Override
 
-[![Build Status](https://github.com/mat81black/fastapi-validation-override/workflows/Test/badge.svg)](https://github.com/mat81black/fastapi-validation-override/actions)
-[![codecov](https://codecov.io/github/mat81black/fastapi-validation-override/graph/badge.svg?token=SL4JPWAB0O)](https://codecov.io/github/mat81black/fastapi-validation-override)
+[![Build Status](https://github.com/matblack81/fastapi-validation-override/workflows/Test/badge.svg)](https://github.com/matblack81/fastapi-validation-override/actions)
+[![codecov](https://codecov.io/github/matblack81/fastapi-validation-override/graph/badge.svg?token=SL4JPWAB0O)](https://codecov.io/github/matblack81/fastapi-validation-override)
 [![pypi package](https://img.shields.io/pypi/v/fastapi-validation-override?color=%2334D058&label=pypi%20package)](https://pypi.org/project/fastapi-validation-override/)
 [![Supported Python versions](https://img.shields.io/pypi/pyversions/fastapi-validation-override.svg?color=%2334D058)](https://pypi.org/project/fastapi-validation-override/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/mat81black/fastapi-validation-override/blob/main/LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/matblack81/fastapi-validation-override/blob/main/LICENSE)
 
 FastAPI returns 422 Unprocessable Entity for every request validation failure. Many APIs, client teams, and HTTP standards treat 400 Bad Request as the correct status code for malformed input. Fixing this in FastAPI requires wiring a custom exception handler and updating the OpenAPI schema separately. `override_validation_error` does both in a single call.
 
@@ -255,24 +255,24 @@ override_validation_error(app)
 
 ## Examples
 
-Runnable examples are in the [`examples/`](https://github.com/mat81black/fastapi-validation-override/tree/main/examples) directory. Run any of them from the project root with `uvicorn examples.<name>:app --reload`, e.g. `uvicorn examples.basic:app --reload`, then open `http://127.0.0.1:8000/docs`:
+Runnable examples are in the [`examples/`](https://github.com/matblack81/fastapi-validation-override/tree/main/examples) directory. Run any of them from the project root with `uvicorn examples.<name>:app --reload`, e.g. `uvicorn examples.basic:app --reload`, then open `http://127.0.0.1:8000/docs`:
 
 | File | Description |
 |---|---|
-| [`basic.py`](https://github.com/mat81black/fastapi-validation-override/blob/main/examples/basic.py) | Minimal setup with the default 400 status code |
-| [`custom_status_code.py`](https://github.com/mat81black/fastapi-validation-override/blob/main/examples/custom_status_code.py) | Using a custom status code (409) |
-| [`handle_exceptions_false.py`](https://github.com/mat81black/fastapi-validation-override/blob/main/examples/handle_exceptions_false.py) | Custom exception handler with schema-only patch |
-| [`custom_validation_schema.py`](https://github.com/mat81black/fastapi-validation-override/blob/main/examples/custom_validation_schema.py) | Replacing the validation error schema with a custom error envelope |
-| [`custom_openapi.py`](https://github.com/mat81black/fastapi-validation-override/blob/main/examples/custom_openapi.py) | Preserving a custom `app.openapi` function |
-| [`existing_response_at_target_code.py`](https://github.com/mat81black/fastapi-validation-override/blob/main/examples/existing_response_at_target_code.py) | `anyOf` merge when the target code is already declared |
-| [`custom_422_response.py`](https://github.com/mat81black/fastapi-validation-override/blob/main/examples/custom_422_response.py) | Keeping a custom, non-validation 422 response |
-| [`with_apirouter.py`](https://github.com/mat81black/fastapi-validation-override/blob/main/examples/with_apirouter.py) | Usage with multiple `APIRouter` instances |
-| [`webhooks_and_callbacks.py`](https://github.com/mat81black/fastapi-validation-override/blob/main/examples/webhooks_and_callbacks.py) | Coverage extends to webhooks and callbacks, not just regular paths |
+| [`basic.py`](https://github.com/matblack81/fastapi-validation-override/blob/main/examples/basic.py) | Minimal setup with the default 400 status code |
+| [`custom_status_code.py`](https://github.com/matblack81/fastapi-validation-override/blob/main/examples/custom_status_code.py) | Using a custom status code (409) |
+| [`handle_exceptions_false.py`](https://github.com/matblack81/fastapi-validation-override/blob/main/examples/handle_exceptions_false.py) | Custom exception handler with schema-only patch |
+| [`custom_validation_schema.py`](https://github.com/matblack81/fastapi-validation-override/blob/main/examples/custom_validation_schema.py) | Replacing the validation error schema with a custom error envelope |
+| [`custom_openapi.py`](https://github.com/matblack81/fastapi-validation-override/blob/main/examples/custom_openapi.py) | Preserving a custom `app.openapi` function |
+| [`existing_response_at_target_code.py`](https://github.com/matblack81/fastapi-validation-override/blob/main/examples/existing_response_at_target_code.py) | `anyOf` merge when the target code is already declared |
+| [`custom_422_response.py`](https://github.com/matblack81/fastapi-validation-override/blob/main/examples/custom_422_response.py) | Keeping a custom, non-validation 422 response |
+| [`with_apirouter.py`](https://github.com/matblack81/fastapi-validation-override/blob/main/examples/with_apirouter.py) | Usage with multiple `APIRouter` instances |
+| [`webhooks_and_callbacks.py`](https://github.com/matblack81/fastapi-validation-override/blob/main/examples/webhooks_and_callbacks.py) | Coverage extends to webhooks and callbacks, not just regular paths |
 
 ## Release Notes
 
-[RELEASE_NOTES](https://github.com/mat81black/fastapi-validation-override/blob/main/release-notes.md)
+[RELEASE_NOTES](https://github.com/matblack81/fastapi-validation-override/blob/main/release-notes.md)
 
 ## License
 
-[MIT](https://github.com/mat81black/fastapi-validation-override/blob/main/LICENSE)
+[MIT](https://github.com/matblack81/fastapi-validation-override/blob/main/LICENSE)
