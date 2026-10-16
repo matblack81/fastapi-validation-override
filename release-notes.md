@@ -7,98 +7,98 @@
 ### Internal
 
 * 🔧 Update GitHub owner name. PR [#90](https://github.com/matblack81/fastapi-validation-override/pull/90) by [@matblack81](https://github.com/matblack81).
-* ⬆ Bump the python-packages group with 3 updates. PR [#89](https://github.com/mat81black/fastapi-validation-override/pull/89) by [@dependabot[bot]](https://github.com/apps/dependabot).
-* ⬆ Bump the python-packages group with 3 updates. PR [#88](https://github.com/mat81black/fastapi-validation-override/pull/88) by [@dependabot[bot]](https://github.com/apps/dependabot).
-* ⬆ Bump the github-actions group with 2 updates. PR [#87](https://github.com/mat81black/fastapi-validation-override/pull/87) by [@dependabot[bot]](https://github.com/apps/dependabot).
+* ⬆ Bump the python-packages group with 3 updates. PR [#89](https://github.com/matblack81/fastapi-validation-override/pull/89) by [@dependabot[bot]](https://github.com/apps/dependabot).
+* ⬆ Bump the python-packages group with 3 updates. PR [#88](https://github.com/matblack81/fastapi-validation-override/pull/88) by [@dependabot[bot]](https://github.com/apps/dependabot).
+* ⬆ Bump the github-actions group with 2 updates. PR [#87](https://github.com/matblack81/fastapi-validation-override/pull/87) by [@dependabot[bot]](https://github.com/apps/dependabot).
 
 ## 1.2.2 (2026-09-22)
 
 ### Internal
 
-* ⬆ Bump anyio from 4.14.1 to 4.14.2. PR [#85](https://github.com/mat81black/fastapi-validation-override/pull/85) by [@dependabot[bot]](https://github.com/apps/dependabot).
-* ⬆ Bump the github-actions group with 3 updates. PR [#84](https://github.com/mat81black/fastapi-validation-override/pull/84) by [@dependabot[bot]](https://github.com/apps/dependabot).
-* ⬆ Bump the python-packages group with 8 updates. PR [#83](https://github.com/mat81black/fastapi-validation-override/pull/83) by [@dependabot[bot]](https://github.com/apps/dependabot).
-* ⬆ Bump pre-commit hooks. PR [#82](https://github.com/mat81black/fastapi-validation-override/pull/82) by [@mat81black](https://github.com/mat81black).
-* ⬆ Bump the python-packages group with 4 updates. PR [#81](https://github.com/mat81black/fastapi-validation-override/pull/81) by [@dependabot[bot]](https://github.com/apps/dependabot).
-* ⬆ Bump re-actors/alls-green from 1.2.2 to 1.3.0 in the github-actions group. PR [#80](https://github.com/mat81black/fastapi-validation-override/pull/80) by [@dependabot[bot]](https://github.com/apps/dependabot).
-* ⬆ Bump fastapi from 0.140.0 to 0.141.1. PR [#79](https://github.com/mat81black/fastapi-validation-override/pull/79) by [@dependabot[bot]](https://github.com/apps/dependabot).
-* ⬆ Bump the python-packages group with 9 updates. PR [#78](https://github.com/mat81black/fastapi-validation-override/pull/78) by [@dependabot[bot]](https://github.com/apps/dependabot).
-* ⬆ Bump the github-actions group with 2 updates. PR [#77](https://github.com/mat81black/fastapi-validation-override/pull/77) by [@dependabot[bot]](https://github.com/apps/dependabot).
-* 👷 Replace actions/labeler with Latest Changes App auto-labeling. PR [#76](https://github.com/mat81black/fastapi-validation-override/pull/76) by [@mat81black](https://github.com/mat81black).
+* ⬆ Bump anyio from 4.14.1 to 4.14.2. PR [#85](https://github.com/matblack81/fastapi-validation-override/pull/85) by [@dependabot[bot]](https://github.com/apps/dependabot).
+* ⬆ Bump the github-actions group with 3 updates. PR [#84](https://github.com/matblack81/fastapi-validation-override/pull/84) by [@dependabot[bot]](https://github.com/apps/dependabot).
+* ⬆ Bump the python-packages group with 8 updates. PR [#83](https://github.com/matblack81/fastapi-validation-override/pull/83) by [@dependabot[bot]](https://github.com/apps/dependabot).
+* ⬆ Bump pre-commit hooks. PR [#82](https://github.com/matblack81/fastapi-validation-override/pull/82) by [@matblack81](https://github.com/matblack81).
+* ⬆ Bump the python-packages group with 4 updates. PR [#81](https://github.com/matblack81/fastapi-validation-override/pull/81) by [@dependabot[bot]](https://github.com/apps/dependabot).
+* ⬆ Bump re-actors/alls-green from 1.2.2 to 1.3.0 in the github-actions group. PR [#80](https://github.com/matblack81/fastapi-validation-override/pull/80) by [@dependabot[bot]](https://github.com/apps/dependabot).
+* ⬆ Bump fastapi from 0.140.0 to 0.141.1. PR [#79](https://github.com/matblack81/fastapi-validation-override/pull/79) by [@dependabot[bot]](https://github.com/apps/dependabot).
+* ⬆ Bump the python-packages group with 9 updates. PR [#78](https://github.com/matblack81/fastapi-validation-override/pull/78) by [@dependabot[bot]](https://github.com/apps/dependabot).
+* ⬆ Bump the github-actions group with 2 updates. PR [#77](https://github.com/matblack81/fastapi-validation-override/pull/77) by [@dependabot[bot]](https://github.com/apps/dependabot).
+* 👷 Replace actions/labeler with Latest Changes App auto-labeling. PR [#76](https://github.com/matblack81/fastapi-validation-override/pull/76) by [@matblack81](https://github.com/matblack81).
 
 ## 1.2.1 (2026-08-12)
 
 ### Internal
 
-* 👷 Tag CI action pins for sync tracking. PR [#74](https://github.com/mat81black/fastapi-validation-override/pull/74) by [@mat81black](https://github.com/mat81black).
+* 👷 Tag CI action pins for sync tracking. PR [#74](https://github.com/matblack81/fastapi-validation-override/pull/74) by [@matblack81](https://github.com/matblack81).
 
 ## 1.2.0 (2026-08-11)
 
 ### Internal
 
-* ♻️ Remove unused labeled/unlabeled events and label-checker job from workflows. PR [#72](https://github.com/mat81black/fastapi-validation-override/pull/72) by [@mat81black](https://github.com/mat81black).
-* ⬆️ Migrate the test suite from httpx to httpx2. PR [#71](https://github.com/mat81black/fastapi-validation-override/pull/71) by [@mat81black](https://github.com/mat81black).
-* ♻️ Refactor workflows to use `gh auth setup-git` for improved authentication. PR [#70](https://github.com/mat81black/fastapi-validation-override/pull/70) by [@mat81black](https://github.com/mat81black).
-* ♻️ Simplify patch_422_responses to match what get_openapi() actually produces. PR [#69](https://github.com/mat81black/fastapi-validation-override/pull/69) by [@mat81black](https://github.com/mat81black).
-* ♻️ Refactor GitHub Actions to improve token usage and credential persistence. PR [#68](https://github.com/mat81black/fastapi-validation-override/pull/68) by [@mat81black](https://github.com/mat81black).
+* ♻️ Remove unused labeled/unlabeled events and label-checker job from workflows. PR [#72](https://github.com/matblack81/fastapi-validation-override/pull/72) by [@matblack81](https://github.com/matblack81).
+* ⬆️ Migrate the test suite from httpx to httpx2. PR [#71](https://github.com/matblack81/fastapi-validation-override/pull/71) by [@matblack81](https://github.com/matblack81).
+* ♻️ Refactor workflows to use `gh auth setup-git` for improved authentication. PR [#70](https://github.com/matblack81/fastapi-validation-override/pull/70) by [@matblack81](https://github.com/matblack81).
+* ♻️ Simplify patch_422_responses to match what get_openapi() actually produces. PR [#69](https://github.com/matblack81/fastapi-validation-override/pull/69) by [@matblack81](https://github.com/matblack81).
+* ♻️ Refactor GitHub Actions to improve token usage and credential persistence. PR [#68](https://github.com/matblack81/fastapi-validation-override/pull/68) by [@matblack81](https://github.com/matblack81).
 
 ## 1.1.1 (2026-08-08)
 
 ### Fixes
 
-* 🐛 Fix orphaned validation schema components left in the OpenAPI output. PR [#66](https://github.com/mat81black/fastapi-validation-override/pull/66) by [@mat81black](https://github.com/mat81black).
+* 🐛 Fix orphaned validation schema components left in the OpenAPI output. PR [#66](https://github.com/matblack81/fastapi-validation-override/pull/66) by [@matblack81](https://github.com/matblack81).
 
 ### Docs
 
-* 📝 Clarify that patch_422_responses targets get_openapi() output. PR [#58](https://github.com/mat81black/fastapi-validation-override/pull/58) by [@mat81black](https://github.com/mat81black).
+* 📝 Clarify that patch_422_responses targets get_openapi() output. PR [#58](https://github.com/matblack81/fastapi-validation-override/pull/58) by [@matblack81](https://github.com/matblack81).
 
 ### Internal
 
-* 🐛 Fix release date defaulting to the date the script was imported. PR [#65](https://github.com/mat81black/fastapi-validation-override/pull/65) by [@mat81black](https://github.com/mat81black).
-* 🐛 Type-check examples in pre-commit, matching the documented lint scope. PR [#64](https://github.com/mat81black/fastapi-validation-override/pull/64) by [@mat81black](https://github.com/mat81black).
-* 📝 Clarify docstrings for the 422 no-op and validation ref naming. PR [#63](https://github.com/mat81black/fastapi-validation-override/pull/63) by [@mat81black](https://github.com/mat81black).
-* ✅ Add test to ensure overriding validation error ignores subsequent calls with different args. PR [#62](https://github.com/mat81black/fastapi-validation-override/pull/62) by [@mat81black](https://github.com/mat81black).
-* ✅ Add regression test for hidden query parameters with undocumented 422 behavior. PR [#61](https://github.com/mat81black/fastapi-validation-override/pull/61) by [@mat81black](https://github.com/mat81black).
-* 🎨 Standardize how examples are run and documented. PR [#60](https://github.com/mat81black/fastapi-validation-override/pull/60) by [@mat81black](https://github.com/mat81black).
-* 🐛 Fix partial release state when release notes write fails. PR [#59](https://github.com/mat81black/fastapi-validation-override/pull/59) by [@mat81black](https://github.com/mat81black).
-* 🐛 Fix infinite recursion on self-referential callback components. PR [#57](https://github.com/mat81black/fastapi-validation-override/pull/57) by [@mat81black](https://github.com/mat81black).
-* 🐛 Reject invalid bump types and cover prepare_release's untested error paths. PR [#56](https://github.com/mat81black/fastapi-validation-override/pull/56) by [@mat81black](https://github.com/mat81black).
-* 🐛 Fix partial release state when release notes update fails. PR [#55](https://github.com/mat81black/fastapi-validation-override/pull/55) by [@mat81black](https://github.com/mat81black).
-* ⬆️ Bump tiangolo/latest-changes to 0.7.1. PR [#54](https://github.com/mat81black/fastapi-validation-override/pull/54) by [@mat81black](https://github.com/mat81black).
-* ✅ Prove PR test changes actually catch a regression before merging. PR [#53](https://github.com/mat81black/fastapi-validation-override/pull/53) by [@mat81black](https://github.com/mat81black).
-* ⬆ Bump fastapi from 0.139.2 to 0.140.0. PR [#52](https://github.com/mat81black/fastapi-validation-override/pull/52) by [@dependabot[bot]](https://github.com/apps/dependabot).
-* ⬆ Bump the python-packages group with 5 updates. PR [#51](https://github.com/mat81black/fastapi-validation-override/pull/51) by [@dependabot[bot]](https://github.com/apps/dependabot).
-* ⬆ Bump the github-actions group with 2 updates. PR [#50](https://github.com/mat81black/fastapi-validation-override/pull/50) by [@dependabot[bot]](https://github.com/apps/dependabot).
+* 🐛 Fix release date defaulting to the date the script was imported. PR [#65](https://github.com/matblack81/fastapi-validation-override/pull/65) by [@matblack81](https://github.com/matblack81).
+* 🐛 Type-check examples in pre-commit, matching the documented lint scope. PR [#64](https://github.com/matblack81/fastapi-validation-override/pull/64) by [@matblack81](https://github.com/matblack81).
+* 📝 Clarify docstrings for the 422 no-op and validation ref naming. PR [#63](https://github.com/matblack81/fastapi-validation-override/pull/63) by [@matblack81](https://github.com/matblack81).
+* ✅ Add test to ensure overriding validation error ignores subsequent calls with different args. PR [#62](https://github.com/matblack81/fastapi-validation-override/pull/62) by [@matblack81](https://github.com/matblack81).
+* ✅ Add regression test for hidden query parameters with undocumented 422 behavior. PR [#61](https://github.com/matblack81/fastapi-validation-override/pull/61) by [@matblack81](https://github.com/matblack81).
+* 🎨 Standardize how examples are run and documented. PR [#60](https://github.com/matblack81/fastapi-validation-override/pull/60) by [@matblack81](https://github.com/matblack81).
+* 🐛 Fix partial release state when release notes write fails. PR [#59](https://github.com/matblack81/fastapi-validation-override/pull/59) by [@matblack81](https://github.com/matblack81).
+* 🐛 Fix infinite recursion on self-referential callback components. PR [#57](https://github.com/matblack81/fastapi-validation-override/pull/57) by [@matblack81](https://github.com/matblack81).
+* 🐛 Reject invalid bump types and cover prepare_release's untested error paths. PR [#56](https://github.com/matblack81/fastapi-validation-override/pull/56) by [@matblack81](https://github.com/matblack81).
+* 🐛 Fix partial release state when release notes update fails. PR [#55](https://github.com/matblack81/fastapi-validation-override/pull/55) by [@matblack81](https://github.com/matblack81).
+* ⬆️ Bump tiangolo/latest-changes to 0.7.1. PR [#54](https://github.com/matblack81/fastapi-validation-override/pull/54) by [@matblack81](https://github.com/matblack81).
+* ✅ Prove PR test changes actually catch a regression before merging. PR [#53](https://github.com/matblack81/fastapi-validation-override/pull/53) by [@matblack81](https://github.com/matblack81).
+* ⬆ Bump fastapi from 0.139.2 to 0.140.0. PR [#52](https://github.com/matblack81/fastapi-validation-override/pull/52) by [@dependabot[bot]](https://github.com/apps/dependabot).
+* ⬆ Bump the python-packages group with 5 updates. PR [#51](https://github.com/matblack81/fastapi-validation-override/pull/51) by [@dependabot[bot]](https://github.com/apps/dependabot).
+* ⬆ Bump the github-actions group with 2 updates. PR [#50](https://github.com/matblack81/fastapi-validation-override/pull/50) by [@dependabot[bot]](https://github.com/apps/dependabot).
 
 ## 1.1.0 (2026-08-01)
 
 ### Features
 
-* ✨ Support custom validation error schemas with any field structure. PR [#44](https://github.com/mat81black/fastapi-validation-override/pull/44) by [@mat81black](https://github.com/mat81black).
-* ✨ Extend validation error patching to webhooks and callbacks. PR [#35](https://github.com/mat81black/fastapi-validation-override/pull/35) by [@mat81black](https://github.com/mat81black).
+* ✨ Support custom validation error schemas with any field structure. PR [#44](https://github.com/matblack81/fastapi-validation-override/pull/44) by [@matblack81](https://github.com/matblack81).
+* ✨ Extend validation error patching to webhooks and callbacks. PR [#35](https://github.com/matblack81/fastapi-validation-override/pull/35) by [@matblack81](https://github.com/matblack81).
 
 ### Fixes
 
-* 🐛 Fix cyclic and unresolvable `$ref` handling in local response resolution. PR [#45](https://github.com/mat81black/fastapi-validation-override/pull/45) by [@mat81black](https://github.com/mat81black).
-* 🐛 Fix invalid OpenAPI produced when merging into a $ref target response. PR [#40](https://github.com/mat81black/fastapi-validation-override/pull/40) by [@mat81black](https://github.com/mat81black).
-* 🐛 Fix user-defined schemas being silently overwritten by validation error definitions. PR [#39](https://github.com/mat81black/fastapi-validation-override/pull/39) by [@mat81black](https://github.com/mat81black).
-* 🐛 Base validation detection on FastAPI's 422 signal instead of schema shape alone. PR [#38](https://github.com/mat81black/fastapi-validation-override/pull/38) by [@mat81black](https://github.com/mat81black).
-* 🐛 Fix custom 422 models with a name ending in HTTPValidationError being silently deleted. PR [#37](https://github.com/mat81black/fastapi-validation-override/pull/37) by [@mat81black](https://github.com/mat81black).
-* 🐛 Fix shared mutable schema objects leaking mutations across routes and apps. PR [#36](https://github.com/mat81black/fastapi-validation-override/pull/36) by [@mat81black](https://github.com/mat81black).
+* 🐛 Fix cyclic and unresolvable `$ref` handling in local response resolution. PR [#45](https://github.com/matblack81/fastapi-validation-override/pull/45) by [@matblack81](https://github.com/matblack81).
+* 🐛 Fix invalid OpenAPI produced when merging into a $ref target response. PR [#40](https://github.com/matblack81/fastapi-validation-override/pull/40) by [@matblack81](https://github.com/matblack81).
+* 🐛 Fix user-defined schemas being silently overwritten by validation error definitions. PR [#39](https://github.com/matblack81/fastapi-validation-override/pull/39) by [@matblack81](https://github.com/matblack81).
+* 🐛 Base validation detection on FastAPI's 422 signal instead of schema shape alone. PR [#38](https://github.com/matblack81/fastapi-validation-override/pull/38) by [@matblack81](https://github.com/matblack81).
+* 🐛 Fix custom 422 models with a name ending in HTTPValidationError being silently deleted. PR [#37](https://github.com/matblack81/fastapi-validation-override/pull/37) by [@matblack81](https://github.com/matblack81).
+* 🐛 Fix shared mutable schema objects leaking mutations across routes and apps. PR [#36](https://github.com/matblack81/fastapi-validation-override/pull/36) by [@matblack81](https://github.com/matblack81).
 
 ### Refactors
 
-* ♻️ Refactor local $ref resolution to support reusable components across multiple sections. PR [#46](https://github.com/mat81black/fastapi-validation-override/pull/46) by [@mat81black](https://github.com/mat81black).
-* ♻️ Read FastAPI's validation error definitions dynamically instead of at import time. PR [#41](https://github.com/mat81black/fastapi-validation-override/pull/41) by [@mat81black](https://github.com/mat81black).
+* ♻️ Refactor local $ref resolution to support reusable components across multiple sections. PR [#46](https://github.com/matblack81/fastapi-validation-override/pull/46) by [@matblack81](https://github.com/matblack81).
+* ♻️ Read FastAPI's validation error definitions dynamically instead of at import time. PR [#41](https://github.com/matblack81/fastapi-validation-override/pull/41) by [@matblack81](https://github.com/matblack81).
 
 ### Docs
 
-* 📝 Clarify behavior for `ValidationError`/`HTTPValidationError` schema collisions in README. PR [#48](https://github.com/mat81black/fastapi-validation-override/pull/48) by [@mat81black](https://github.com/mat81black).
-* 📝 Clarify idempotency behavior in README. PR [#43](https://github.com/mat81black/fastapi-validation-override/pull/43) by [@mat81black](https://github.com/mat81black).
+* 📝 Clarify behavior for `ValidationError`/`HTTPValidationError` schema collisions in README. PR [#48](https://github.com/matblack81/fastapi-validation-override/pull/48) by [@matblack81](https://github.com/matblack81).
+* 📝 Clarify idempotency behavior in README. PR [#43](https://github.com/matblack81/fastapi-validation-override/pull/43) by [@matblack81](https://github.com/matblack81).
 
 ### Internal
 
-* ✅ Cover webhooks and callbacks with a runnable example. PR [#47](https://github.com/mat81black/fastapi-validation-override/pull/47) by [@mat81black](https://github.com/mat81black).
+* ✅ Cover webhooks and callbacks with a runnable example. PR [#47](https://github.com/matblack81/fastapi-validation-override/pull/47) by [@matblack81](https://github.com/matblack81).
 
 ## 1.0.0 (2026-07-28)
 
@@ -108,56 +108,56 @@
 
 ### Features
 
-* ✨ Keep validation errors documented at the target code even with a custom 422 response. PR [#31](https://github.com/mat81black/fastapi-validation-override/pull/31) by [@mat81black](https://github.com/mat81black).
-* ✨ Add public patch_422_responses for schema patching outside override_validation_error. PR [#30](https://github.com/mat81black/fastapi-validation-override/pull/30) by [@mat81black](https://github.com/mat81black).
+* ✨ Keep validation errors documented at the target code even with a custom 422 response. PR [#31](https://github.com/matblack81/fastapi-validation-override/pull/31) by [@matblack81](https://github.com/matblack81).
+* ✨ Add public patch_422_responses for schema patching outside override_validation_error. PR [#30](https://github.com/matblack81/fastapi-validation-override/pull/30) by [@matblack81](https://github.com/matblack81).
 
 ### Refactors
 
-* ♻️ Reorder anyOf to list the validation error before the custom response. PR [#32](https://github.com/mat81black/fastapi-validation-override/pull/32) by [@mat81black](https://github.com/mat81black).
+* ♻️ Reorder anyOf to list the validation error before the custom response. PR [#32](https://github.com/matblack81/fastapi-validation-override/pull/32) by [@matblack81](https://github.com/matblack81).
 
 ### Internal
 
-* ⬆ Bump pre-commit hooks. PR [#29](https://github.com/mat81black/fastapi-validation-override/pull/29) by [@mat81black](https://github.com/mat81black).
-* ⬆ Bump the github-actions group with 3 updates. PR [#28](https://github.com/mat81black/fastapi-validation-override/pull/28) by [@dependabot[bot]](https://github.com/apps/dependabot).
-* ⬆ Bump fastapi from 0.139.0 to 0.139.2. PR [#27](https://github.com/mat81black/fastapi-validation-override/pull/27) by [@dependabot[bot]](https://github.com/apps/dependabot).
-* ⬆ Bump the python-packages group with 5 updates. PR [#26](https://github.com/mat81black/fastapi-validation-override/pull/26) by [@dependabot[bot]](https://github.com/apps/dependabot).
-* 👷 Replace Dependabot pre-commit ecosystem with custom bump workflow. PR [#25](https://github.com/mat81black/fastapi-validation-override/pull/25) by [@mat81black](https://github.com/mat81black).
-* ⬆ Bump the python-packages group across 1 directory with 6 updates. PR [#24](https://github.com/mat81black/fastapi-validation-override/pull/24) by [@dependabot[bot]](https://github.com/apps/dependabot).
-* ⬆ Bump the github-actions group across 1 directory with 4 updates. PR [#23](https://github.com/mat81black/fastapi-validation-override/pull/23) by [@dependabot[bot]](https://github.com/apps/dependabot).
+* ⬆ Bump pre-commit hooks. PR [#29](https://github.com/matblack81/fastapi-validation-override/pull/29) by [@matblack81](https://github.com/matblack81).
+* ⬆ Bump the github-actions group with 3 updates. PR [#28](https://github.com/matblack81/fastapi-validation-override/pull/28) by [@dependabot[bot]](https://github.com/apps/dependabot).
+* ⬆ Bump fastapi from 0.139.0 to 0.139.2. PR [#27](https://github.com/matblack81/fastapi-validation-override/pull/27) by [@dependabot[bot]](https://github.com/apps/dependabot).
+* ⬆ Bump the python-packages group with 5 updates. PR [#26](https://github.com/matblack81/fastapi-validation-override/pull/26) by [@dependabot[bot]](https://github.com/apps/dependabot).
+* 👷 Replace Dependabot pre-commit ecosystem with custom bump workflow. PR [#25](https://github.com/matblack81/fastapi-validation-override/pull/25) by [@matblack81](https://github.com/matblack81).
+* ⬆ Bump the python-packages group across 1 directory with 6 updates. PR [#24](https://github.com/matblack81/fastapi-validation-override/pull/24) by [@dependabot[bot]](https://github.com/apps/dependabot).
+* ⬆ Bump the github-actions group across 1 directory with 4 updates. PR [#23](https://github.com/matblack81/fastapi-validation-override/pull/23) by [@dependabot[bot]](https://github.com/apps/dependabot).
 
 ## 0.1.3 (2026-07-10)
 
 ### Refactors
 
-* ♻️ Clarify idempotency guard comment to reflect actual behavior. PR [#17](https://github.com/mat81black/fastapi-validation-override/pull/17) by [@mat81black](https://github.com/mat81black).
+* ♻️ Clarify idempotency guard comment to reflect actual behavior. PR [#17](https://github.com/matblack81/fastapi-validation-override/pull/17) by [@matblack81](https://github.com/matblack81).
 
 ### Docs
 
-* 📝 Fix wrong package name in installation commands. PR [#19](https://github.com/mat81black/fastapi-validation-override/pull/19) by [@mat81black](https://github.com/mat81black).
+* 📝 Fix wrong package name in installation commands. PR [#19](https://github.com/matblack81/fastapi-validation-override/pull/19) by [@matblack81](https://github.com/matblack81).
 
 ### Internal
 
-* ✅ Add tests for query param validation and multi-method path patching. PR [#18](https://github.com/mat81black/fastapi-validation-override/pull/18) by [@mat81black](https://github.com/mat81black).
+* ✅ Add tests for query param validation and multi-method path patching. PR [#18](https://github.com/matblack81/fastapi-validation-override/pull/18) by [@matblack81](https://github.com/matblack81).
 
 ## 0.1.2 (2026-07-09)
 
 ### Internal
 
-* 🔧 Integrate Codecov for coverage tracking and update README. PR [#15](https://github.com/mat81black/fastapi-validation-override/pull/15) by [@mat81black](https://github.com/mat81black).
+* 🔧 Integrate Codecov for coverage tracking and update README. PR [#15](https://github.com/matblack81/fastapi-validation-override/pull/15) by [@matblack81](https://github.com/matblack81).
 
 ## 0.1.1 (2026-07-09)
 
 ### Docs
 
-* 📝 Rewrite README with PyPI-safe links and corrected project metadata. PR [#13](https://github.com/mat81black/fastapi-validation-override/pull/13) by [@mat81black](https://github.com/mat81black).
+* 📝 Rewrite README with PyPI-safe links and corrected project metadata. PR [#13](https://github.com/matblack81/fastapi-validation-override/pull/13) by [@matblack81](https://github.com/matblack81).
 
 ### Internal
 
-* ⬆ bump the python-packages group with 5 updates. PR [#11](https://github.com/mat81black/fastapi-validation-override/pull/11) by [@dependabot[bot]](https://github.com/apps/dependabot).
-* ⬆ bump https://github.com/crate-ci/typos from v1.48.0 to 5.0.7 in the pre-commit group. PR [#9](https://github.com/mat81black/fastapi-validation-override/pull/9) by [@dependabot[bot]](https://github.com/apps/dependabot).
-* ⬆ bump dorny/paths-filter from 4.0.1 to 4.0.2 in the github-actions group. PR [#10](https://github.com/mat81black/fastapi-validation-override/pull/10) by [@dependabot[bot]](https://github.com/apps/dependabot).
-* ⬆ bump fastapi from 0.138.0 to 0.139.0. PR [#12](https://github.com/mat81black/fastapi-validation-override/pull/12) by [@dependabot[bot]](https://github.com/apps/dependabot).
-* 🔧 Overhaul CI/CD workflows for labeling, releases, and coverage tracking. PR [#8](https://github.com/mat81black/fastapi-validation-override/pull/8) by [@mat81black](https://github.com/mat81black).
+* ⬆ bump the python-packages group with 5 updates. PR [#11](https://github.com/matblack81/fastapi-validation-override/pull/11) by [@dependabot[bot]](https://github.com/apps/dependabot).
+* ⬆ bump https://github.com/crate-ci/typos from v1.48.0 to 5.0.7 in the pre-commit group. PR [#9](https://github.com/matblack81/fastapi-validation-override/pull/9) by [@dependabot[bot]](https://github.com/apps/dependabot).
+* ⬆ bump dorny/paths-filter from 4.0.1 to 4.0.2 in the github-actions group. PR [#10](https://github.com/matblack81/fastapi-validation-override/pull/10) by [@dependabot[bot]](https://github.com/apps/dependabot).
+* ⬆ bump fastapi from 0.138.0 to 0.139.0. PR [#12](https://github.com/matblack81/fastapi-validation-override/pull/12) by [@dependabot[bot]](https://github.com/apps/dependabot).
+* 🔧 Overhaul CI/CD workflows for labeling, releases, and coverage tracking. PR [#8](https://github.com/matblack81/fastapi-validation-override/pull/8) by [@matblack81](https://github.com/matblack81).
 
 ## 0.1.0 (2026-06-25)
 
