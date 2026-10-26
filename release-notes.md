@@ -6,6 +6,10 @@
 
 * 🔧 Replace old GitHub username in release notes links. PR [#92](https://github.com/matblack81/fastapi-validation-override/pull/92) by [@matblack81](https://github.com/matblack81).
 
+### Internal
+
+* ✅ Migrate the test suite to TestClient. PR [#93](https://github.com/matblack81/fastapi-validation-override/pull/93) by [@matblack81](https://github.com/matblack81).
+
 ## 1.2.3 (2026-10-16)
 
 ### Internal
