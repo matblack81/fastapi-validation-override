@@ -123,6 +123,7 @@ keep-runtime-typing = true
 
 [tool.typos.default.extend-identifiers]
 alls = "alls"
+certifi = "certifi"
 
 [tool.pytest.ini_options]
 minversion = "9.0"
