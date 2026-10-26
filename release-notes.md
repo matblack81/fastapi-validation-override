@@ -8,6 +8,7 @@
 
 ### Internal
 
+* 👷 Add a weekly CI run against FastAPI master. PR [#95](https://github.com/matblack81/fastapi-validation-override/pull/95) by [@matblack81](https://github.com/matblack81).
 * 👷 Test against the actual latest FastAPI in CI. PR [#94](https://github.com/matblack81/fastapi-validation-override/pull/94) by [@matblack81](https://github.com/matblack81).
 * ✅ Migrate the test suite to TestClient. PR [#93](https://github.com/matblack81/fastapi-validation-override/pull/93) by [@matblack81](https://github.com/matblack81).
 
