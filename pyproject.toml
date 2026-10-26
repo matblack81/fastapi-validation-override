@@ -43,10 +43,10 @@ Changelog = "https://github.com/matblack81/fastapi-validation-override/blob/main
 
 [dependency-groups]
 dev = [
+    "httpx>=0.28.1",
     "httpx2>=0.28.0",
     "ruff>=0.14.0",
     "pytest>=9.1.0",
-    "pytest-asyncio>=1.3.0",
     "pytest-dotenv>=0.5.2",
     "mypy>=1.17.0",
     "coverage[toml]>=7.14.1",
@@ -131,8 +131,14 @@ addopts = [
     "--strict-markers",
 ]
 strict_xfail = true
-filterwarnings = ["error"]
+filterwarnings = [
+    "error",
+    # starlette.testclient reads anyio.abc.BlockingPortal at import time; anyio >=4.15
+    # deprecated that alias in favor of anyio.from_thread.BlockingPortal. This is
+    # starlette's alias to fix (https://github.com/Kludex/starlette/pull/3498), not ours,
+    # and anyio isn't a dependency we declare or control the version of. Remove this once
+    # the installed starlette no longer triggers the warning.
+    "default:The anyio.abc.BlockingPortal alias is deprecated:DeprecationWarning",
+]
 testpaths = ["tests"]
-asyncio_mode = "auto"
-asyncio_default_fixture_loop_scope = "session"
 pythonpath = ["."]

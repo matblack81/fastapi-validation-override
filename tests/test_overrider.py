@@ -8,7 +8,7 @@ from fastapi import FastAPI, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.openapi.constants import REF_PREFIX
 from fastapi.responses import JSONResponse
-from httpx2 import ASGITransport, AsyncClient
+from fastapi.testclient import TestClient
 from pydantic import BaseModel
 
 from fastapi_validation_override import override_validation_error, patch_422_responses
@@ -24,14 +24,10 @@ class ErrorModel(BaseModel):  # pragma: no cover
     message: str
 
 
-def _client(app: FastAPI) -> AsyncClient:
-    return AsyncClient(transport=ASGITransport(app=app), base_url="http://test")
-
-
 # ── runtime ───────────────────────────────────────────────────────────────────
 
 
-async def test_valid_request_returns_200() -> None:
+def test_valid_request_returns_200() -> None:
     app = FastAPI()
 
     @app.post("/items")
@@ -39,13 +35,13 @@ async def test_valid_request_returns_200() -> None:
 
     override_validation_error(app)
 
-    async with _client(app) as client:
-        response = await client.post("/items", json={"name": "test", "price": 9.99})
+    with TestClient(app) as client:
+        response = client.post("/items", json={"name": "test", "price": 9.99})
 
     assert response.status_code == status.HTTP_200_OK
 
 
-async def test_invalid_body_returns_target_status_code() -> None:
+def test_invalid_body_returns_target_status_code() -> None:
     app = FastAPI()
 
     @app.post("/items")
@@ -53,13 +49,13 @@ async def test_invalid_body_returns_target_status_code() -> None:
 
     override_validation_error(app, status_code=status.HTTP_400_BAD_REQUEST)
 
-    async with _client(app) as client:
-        response = await client.post("/items", json={"name": "test"})  # missing price
+    with TestClient(app) as client:
+        response = client.post("/items", json={"name": "test"})  # missing price
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
 
 
-async def test_invalid_body_response_has_detail_key() -> None:
+def test_invalid_body_response_has_detail_key() -> None:
     app = FastAPI()
 
     @app.post("/items")
@@ -67,13 +63,13 @@ async def test_invalid_body_response_has_detail_key() -> None:
 
     override_validation_error(app, status_code=status.HTTP_400_BAD_REQUEST)
 
-    async with _client(app) as client:
-        response = await client.post("/items", json={"name": "test"})
+    with TestClient(app) as client:
+        response = client.post("/items", json={"name": "test"})
 
     assert "detail" in response.json()
 
 
-async def test_handle_exceptions_false_runtime_keeps_422() -> None:
+def test_handle_exceptions_false_runtime_keeps_422() -> None:
     app = FastAPI()
 
     @app.post("/items")
@@ -81,13 +77,13 @@ async def test_handle_exceptions_false_runtime_keeps_422() -> None:
 
     override_validation_error(app, status_code=status.HTTP_400_BAD_REQUEST, handle_exceptions=False)
 
-    async with _client(app) as client:
-        response = await client.post("/items", json={"name": "test"})
+    with TestClient(app) as client:
+        response = client.post("/items", json={"name": "test"})
 
     assert response.status_code == 422
 
 
-async def test_handle_exceptions_false_preserves_pre_existing_custom_handler() -> None:
+def test_handle_exceptions_false_preserves_pre_existing_custom_handler() -> None:
     app = FastAPI()
 
     @app.exception_handler(RequestValidationError)
@@ -99,8 +95,8 @@ async def test_handle_exceptions_false_preserves_pre_existing_custom_handler() -
 
     override_validation_error(app, status_code=status.HTTP_400_BAD_REQUEST, handle_exceptions=False)
 
-    async with _client(app) as client:
-        response = await client.post("/items", json={"name": "test"})
+    with TestClient(app) as client:
+        response = client.post("/items", json={"name": "test"})
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert response.json()["message"] == "custom"
@@ -109,7 +105,7 @@ async def test_handle_exceptions_false_preserves_pre_existing_custom_handler() -
 # ── schema: rotte con body ────────────────────────────────────────────────────
 
 
-async def test_schema_422_moved_to_target_code() -> None:
+def test_schema_422_moved_to_target_code() -> None:
     app = FastAPI()
 
     @app.post("/items")
@@ -117,15 +113,15 @@ async def test_schema_422_moved_to_target_code() -> None:
 
     override_validation_error(app, status_code=status.HTTP_400_BAD_REQUEST)
 
-    async with _client(app) as client:
-        schema = (await client.get("/openapi.json")).json()
+    with TestClient(app) as client:
+        schema = client.get("/openapi.json").json()
 
     responses = schema["paths"]["/items"]["post"]["responses"]
     assert "422" not in responses
     assert "400" in responses
 
 
-async def test_schema_handle_exceptions_false_still_patches_schema() -> None:
+def test_schema_handle_exceptions_false_still_patches_schema() -> None:
     app = FastAPI()
 
     @app.post("/items")
@@ -133,15 +129,15 @@ async def test_schema_handle_exceptions_false_still_patches_schema() -> None:
 
     override_validation_error(app, status_code=status.HTTP_400_BAD_REQUEST, handle_exceptions=False)
 
-    async with _client(app) as client:
-        schema = (await client.get("/openapi.json")).json()
+    with TestClient(app) as client:
+        schema = client.get("/openapi.json").json()
 
     responses = schema["paths"]["/items"]["post"]["responses"]
     assert "422" not in responses
     assert "400" in responses
 
 
-async def test_schema_existing_response_at_target_code_merges_description() -> None:
+def test_schema_existing_response_at_target_code_merges_description() -> None:
     app = FastAPI()
 
     @app.post("/items", responses={400: {"description": "Custom Bad Request"}})
@@ -149,8 +145,8 @@ async def test_schema_existing_response_at_target_code_merges_description() -> N
 
     override_validation_error(app, status_code=status.HTTP_400_BAD_REQUEST)
 
-    async with _client(app) as client:
-        schema = (await client.get("/openapi.json")).json()
+    with TestClient(app) as client:
+        schema = client.get("/openapi.json").json()
 
     responses = schema["paths"]["/items"]["post"]["responses"]
     assert "422" not in responses
@@ -158,7 +154,7 @@ async def test_schema_existing_response_at_target_code_merges_description() -> N
     assert "Validation Error" in responses["400"]["description"]
 
 
-async def test_schema_existing_response_with_model_creates_anyof() -> None:
+def test_schema_existing_response_with_model_creates_anyof() -> None:
     app = FastAPI()
 
     @app.post("/items", responses={400: {"model": ErrorModel}})
@@ -166,8 +162,8 @@ async def test_schema_existing_response_with_model_creates_anyof() -> None:
 
     override_validation_error(app, status_code=status.HTTP_400_BAD_REQUEST)
 
-    async with _client(app) as client:
-        schema = (await client.get("/openapi.json")).json()
+    with TestClient(app) as client:
+        schema = client.get("/openapi.json").json()
 
     response_400 = schema["paths"]["/items"]["post"]["responses"]["400"]
     content_schema = response_400["content"]["application/json"]["schema"]
@@ -178,7 +174,7 @@ async def test_schema_existing_response_with_model_creates_anyof() -> None:
 # ── schema: edge case - anyOf merge con append ───────────────────────────────
 
 
-async def test_schema_existing_anyof_response_appends_validation_error() -> None:
+def test_schema_existing_anyof_response_appends_validation_error() -> None:
     app = FastAPI()
 
     @app.post("/items")
@@ -205,8 +201,8 @@ async def test_schema_existing_anyof_response_appends_validation_error() -> None
     app.openapi = my_openapi
     override_validation_error(app, status_code=status.HTTP_400_BAD_REQUEST)
 
-    async with _client(app) as client:
-        schema = (await client.get("/openapi.json")).json()
+    with TestClient(app) as client:
+        schema = client.get("/openapi.json").json()
 
     response_400 = schema["paths"]["/items"]["post"]["responses"]["400"]
     content_schema = response_400["content"]["application/json"]["schema"]
@@ -217,7 +213,7 @@ async def test_schema_existing_anyof_response_appends_validation_error() -> None
 # ── schema: edge case - chiavi non-HTTP nel path item ────────────────────────
 
 
-async def test_schema_path_item_non_http_key_is_skipped() -> None:
+def test_schema_path_item_non_http_key_is_skipped() -> None:
     app = FastAPI()
 
     @app.post("/items")
@@ -235,8 +231,8 @@ async def test_schema_path_item_non_http_key_is_skipped() -> None:
     app.openapi = my_openapi
     override_validation_error(app, status_code=status.HTTP_400_BAD_REQUEST)
 
-    async with _client(app) as client:
-        schema = (await client.get("/openapi.json")).json()
+    with TestClient(app) as client:
+        schema = client.get("/openapi.json").json()
 
     responses = schema["paths"]["/items"]["post"]["responses"]
     assert "422" not in responses
@@ -246,7 +242,7 @@ async def test_schema_path_item_non_http_key_is_skipped() -> None:
 # ── schema: edge case - rotte senza body ─────────────────────────────────────
 
 
-async def test_schema_get_route_without_params_not_modified() -> None:
+def test_schema_get_route_without_params_not_modified() -> None:
     app = FastAPI()
 
     @app.get("/items")
@@ -254,15 +250,15 @@ async def test_schema_get_route_without_params_not_modified() -> None:
 
     override_validation_error(app, status_code=status.HTTP_400_BAD_REQUEST)
 
-    async with _client(app) as client:
-        schema = (await client.get("/openapi.json")).json()
+    with TestClient(app) as client:
+        schema = client.get("/openapi.json").json()
 
     responses = schema["paths"]["/items"]["get"]["responses"]
     assert "422" not in responses
     assert "400" not in responses
 
 
-async def test_schema_get_route_with_required_query_param_is_patched() -> None:
+def test_schema_get_route_with_required_query_param_is_patched() -> None:
     app = FastAPI()
 
     @app.get("/items")
@@ -270,8 +266,8 @@ async def test_schema_get_route_with_required_query_param_is_patched() -> None:
 
     override_validation_error(app, status_code=status.HTTP_400_BAD_REQUEST)
 
-    async with _client(app) as client:
-        schema = (await client.get("/openapi.json")).json()
+    with TestClient(app) as client:
+        schema = client.get("/openapi.json").json()
 
     responses = schema["paths"]["/items"]["get"]["responses"]
     assert "422" not in responses
@@ -281,7 +277,7 @@ async def test_schema_get_route_with_required_query_param_is_patched() -> None:
 # ── schema: custom app.openapi ────────────────────────────────────────────────
 
 
-async def test_custom_openapi_is_called_and_result_is_patched() -> None:
+def test_custom_openapi_is_called_and_result_is_patched() -> None:
     app = FastAPI()
     custom_called = False
 
@@ -303,9 +299,9 @@ async def test_custom_openapi_is_called_and_result_is_patched() -> None:
     app.openapi = my_custom_openapi
     override_validation_error(app, status_code=status.HTTP_400_BAD_REQUEST)
 
-    async with _client(app) as client:
-        schema = (await client.get("/openapi.json")).json()
-        schema2 = (await client.get("/openapi.json")).json()
+    with TestClient(app) as client:
+        schema = client.get("/openapi.json").json()
+        schema2 = client.get("/openapi.json").json()
 
     assert custom_called
     assert schema["info"].get("x-custom") == "my-value"
@@ -318,7 +314,7 @@ async def test_custom_openapi_is_called_and_result_is_patched() -> None:
 # ── idempotenza ───────────────────────────────────────────────────────────────
 
 
-async def test_double_call_idempotent_runtime() -> None:
+def test_double_call_idempotent_runtime() -> None:
     app = FastAPI()
 
     @app.post("/items")
@@ -327,13 +323,13 @@ async def test_double_call_idempotent_runtime() -> None:
     override_validation_error(app, status_code=status.HTTP_400_BAD_REQUEST)
     override_validation_error(app, status_code=status.HTTP_400_BAD_REQUEST)
 
-    async with _client(app) as client:
-        response = await client.post("/items", json={"name": "test"})
+    with TestClient(app) as client:
+        response = client.post("/items", json={"name": "test"})
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
 
 
-async def test_double_call_idempotent_schema() -> None:
+def test_double_call_idempotent_schema() -> None:
     app = FastAPI()
 
     @app.post("/items")
@@ -342,8 +338,8 @@ async def test_double_call_idempotent_schema() -> None:
     override_validation_error(app, status_code=status.HTTP_400_BAD_REQUEST)
     override_validation_error(app, status_code=status.HTTP_400_BAD_REQUEST)
 
-    async with _client(app) as client:
-        schema = (await client.get("/openapi.json")).json()
+    with TestClient(app) as client:
+        schema = client.get("/openapi.json").json()
 
     responses = schema["paths"]["/items"]["post"]["responses"]
     assert "422" not in responses
@@ -352,7 +348,7 @@ async def test_double_call_idempotent_schema() -> None:
     assert "anyOf" not in content.get("schema", {})
 
 
-async def test_double_call_with_different_arguments_keeps_first_call_behavior() -> None:
+def test_double_call_with_different_arguments_keeps_first_call_behavior() -> None:
     """The docstring promises the second call is ignored 'even with different arguments' — pin that
     a differing status_code, handle_exceptions, and merge_target_response on the second call have no
     effect, at runtime and in the schema."""
@@ -366,9 +362,9 @@ async def test_double_call_with_different_arguments_keeps_first_call_behavior() 
         app, status_code=status.HTTP_409_CONFLICT, handle_exceptions=False, merge_target_response=False
     )
 
-    async with _client(app) as client:
-        response = await client.post("/items", json={"name": "test"})
-        schema = (await client.get("/openapi.json")).json()
+    with TestClient(app) as client:
+        response = client.post("/items", json={"name": "test"})
+        schema = client.get("/openapi.json").json()
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     responses = schema["paths"]["/items"]["post"]["responses"]
@@ -380,7 +376,7 @@ async def test_double_call_with_different_arguments_keeps_first_call_behavior() 
 # ── guard status_code=422 ─────────────────────────────────────────────────────
 
 
-async def test_guard_status_code_422_is_noop_runtime() -> None:
+def test_guard_status_code_422_is_noop_runtime() -> None:
     app = FastAPI()
 
     @app.post("/items")
@@ -388,13 +384,13 @@ async def test_guard_status_code_422_is_noop_runtime() -> None:
 
     override_validation_error(app, status_code=422)
 
-    async with _client(app) as client:
-        response = await client.post("/items", json={"name": "test"})
+    with TestClient(app) as client:
+        response = client.post("/items", json={"name": "test"})
 
     assert response.status_code == 422
 
 
-async def test_guard_status_code_422_is_noop_schema() -> None:
+def test_guard_status_code_422_is_noop_schema() -> None:
     app = FastAPI()
 
     @app.post("/items")
@@ -402,8 +398,8 @@ async def test_guard_status_code_422_is_noop_schema() -> None:
 
     override_validation_error(app, status_code=422)
 
-    async with _client(app) as client:
-        schema = (await client.get("/openapi.json")).json()
+    with TestClient(app) as client:
+        schema = client.get("/openapi.json").json()
 
     responses = schema["paths"]["/items"]["post"]["responses"]
     assert "422" in responses
@@ -460,7 +456,7 @@ def test_status_code_incompatible_with_response_body_is_rejected(status_code: in
 # ── runtime: query param ──────────────────────────────────────────────────────
 
 
-async def test_invalid_query_param_returns_target_status_code() -> None:
+def test_invalid_query_param_returns_target_status_code() -> None:
     app = FastAPI()
 
     @app.get("/items")
@@ -468,13 +464,13 @@ async def test_invalid_query_param_returns_target_status_code() -> None:
 
     override_validation_error(app, status_code=status.HTTP_400_BAD_REQUEST)
 
-    async with _client(app) as client:
-        response = await client.get("/items", params={"item_id": "not-a-number"})
+    with TestClient(app) as client:
+        response = client.get("/items", params={"item_id": "not-a-number"})
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
 
 
-async def test_hidden_query_param_still_documents_and_returns_target_code() -> None:
+def test_hidden_query_param_still_documents_and_returns_target_code() -> None:
     from typing import Annotated
 
     from fastapi import Query
@@ -486,9 +482,9 @@ async def test_hidden_query_param_still_documents_and_returns_target_code() -> N
 
     override_validation_error(app, status_code=status.HTTP_400_BAD_REQUEST)
 
-    async with _client(app) as client:
-        schema = (await client.get("/openapi.json")).json()
-        response = await client.get("/hidden", params={"secret": "not-a-number"})
+    with TestClient(app) as client:
+        schema = client.get("/openapi.json").json()
+        response = client.get("/hidden", params={"secret": "not-a-number"})
 
     operation = schema["paths"]["/hidden"]["get"]
     assert "parameters" not in operation
@@ -497,7 +493,7 @@ async def test_hidden_query_param_still_documents_and_returns_target_code() -> N
     assert response.status_code == status.HTTP_400_BAD_REQUEST
 
 
-async def test_hidden_query_param_with_existing_422_leaves_target_code_undocumented() -> None:
+def test_hidden_query_param_with_existing_422_leaves_target_code_undocumented() -> None:
     """
     Regression pin for the documented limitation: a hidden parameter's operation is only detected
     as needing validation via FastAPI's own 422 response or a visible requestBody/parameters. If the
@@ -518,9 +514,9 @@ async def test_hidden_query_param_with_existing_422_leaves_target_code_undocumen
 
     override_validation_error(app, status_code=status.HTTP_400_BAD_REQUEST)
 
-    async with _client(app) as client:
-        schema = (await client.get("/openapi.json")).json()
-        response = await client.get("/hidden", params={"secret": "not-a-number"})
+    with TestClient(app) as client:
+        schema = client.get("/openapi.json").json()
+        response = client.get("/hidden", params={"secret": "not-a-number"})
 
     operation = schema["paths"]["/hidden"]["get"]
     assert "parameters" not in operation
@@ -533,7 +529,7 @@ async def test_hidden_query_param_with_existing_422_leaves_target_code_undocumen
 # ── schema: path con metodi multipli ─────────────────────────────────────────
 
 
-async def test_schema_multiple_methods_on_same_path_all_patched() -> None:
+def test_schema_multiple_methods_on_same_path_all_patched() -> None:
     app = FastAPI()
 
     @app.get("/items")
@@ -544,8 +540,8 @@ async def test_schema_multiple_methods_on_same_path_all_patched() -> None:
 
     override_validation_error(app, status_code=status.HTTP_400_BAD_REQUEST)
 
-    async with _client(app) as client:
-        schema = (await client.get("/openapi.json")).json()
+    with TestClient(app) as client:
+        schema = client.get("/openapi.json").json()
 
     get_responses = schema["paths"]["/items"]["get"]["responses"]
     post_responses = schema["paths"]["/items"]["post"]["responses"]
@@ -954,7 +950,7 @@ def test_resolve_validation_ref_reads_definitions_dynamically() -> None:
     assert schemas["HTTPValidationError"] == custom_http_validation_error
 
 
-async def test_override_validation_error_honors_definitions_monkeypatched_before_call() -> None:
+def test_override_validation_error_honors_definitions_monkeypatched_before_call() -> None:
     custom_validation_error = {"title": "ErroreValidazione", "type": "object", "properties": {"codice": {}}}
     custom_http_validation_error = {
         "title": "ErroreHTTPValidazione",
@@ -973,8 +969,8 @@ async def test_override_validation_error_honors_definitions_monkeypatched_before
 
         override_validation_error(app, status_code=status.HTTP_400_BAD_REQUEST)
 
-        async with _client(app) as client:
-            schema = (await client.get("/openapi.json")).json()
+        with TestClient(app) as client:
+            schema = client.get("/openapi.json").json()
     finally:
         fastapi_openapi_utils.validation_error_definition = original_validation_error
         fastapi_openapi_utils.validation_error_response_definition = original_http_validation_error
@@ -1120,7 +1116,7 @@ def test_patch_422_running_twice_on_already_merged_anyof_does_not_duplicate() ->
 # ── override_validation_error: 422 custom + target sintetizzato (end-to-end) ─
 
 
-async def test_custom_422_left_untouched_and_target_synthesized_end_to_end() -> None:
+def test_custom_422_left_untouched_and_target_synthesized_end_to_end() -> None:
     app = FastAPI()
 
     class MyCustom422(BaseModel):  # pragma: no cover
@@ -1131,8 +1127,8 @@ async def test_custom_422_left_untouched_and_target_synthesized_end_to_end() -> 
 
     override_validation_error(app, status_code=status.HTTP_400_BAD_REQUEST)
 
-    async with _client(app) as client:
-        schema = (await client.get("/openapi.json")).json()
+    with TestClient(app) as client:
+        schema = client.get("/openapi.json").json()
 
     responses = schema["paths"]["/items"]["post"]["responses"]
     assert responses["422"]["content"]["application/json"]["schema"]["$ref"].endswith("MyCustom422")
@@ -1141,7 +1137,7 @@ async def test_custom_422_left_untouched_and_target_synthesized_end_to_end() -> 
     assert "ValidationError" in schema["components"]["schemas"]
 
 
-async def test_model_named_like_http_validation_error_is_not_mistaken_for_it_end_to_end() -> None:
+def test_model_named_like_http_validation_error_is_not_mistaken_for_it_end_to_end() -> None:
     app = FastAPI()
 
     class MyHTTPValidationError(BaseModel):  # pragma: no cover
@@ -1152,15 +1148,15 @@ async def test_model_named_like_http_validation_error_is_not_mistaken_for_it_end
 
     override_validation_error(app, status_code=status.HTTP_400_BAD_REQUEST)
 
-    async with _client(app) as client:
-        schema = (await client.get("/openapi.json")).json()
+    with TestClient(app) as client:
+        schema = client.get("/openapi.json").json()
 
     responses = schema["paths"]["/items"]["post"]["responses"]
     assert responses["422"]["content"]["application/json"]["schema"]["$ref"].endswith("MyHTTPValidationError")
     assert responses["400"]["content"]["application/json"]["schema"]["$ref"] == f"{REF_PREFIX}HTTPValidationError"
 
 
-async def test_unrelated_model_literally_named_http_validation_error_survives_end_to_end() -> None:
+def test_unrelated_model_literally_named_http_validation_error_survives_end_to_end() -> None:
     """
     Regression scenario: a model with the exact same name as FastAPI's own component is used
     elsewhere in the app, on a route that never triggers validation itself. Since no other route
@@ -1183,8 +1179,8 @@ async def test_unrelated_model_literally_named_http_validation_error_survives_en
 
     override_validation_error(app, status_code=status.HTTP_400_BAD_REQUEST)
 
-    async with _client(app) as client:
-        schema = (await client.get("/openapi.json")).json()
+    with TestClient(app) as client:
+        schema = client.get("/openapi.json").json()
 
     schemas = schema["components"]["schemas"]
     assert schemas["HTTPValidationError"]["properties"] == {"my_own_field": {"type": "string", "title": "My Own Field"}}
@@ -1196,7 +1192,7 @@ async def test_unrelated_model_literally_named_http_validation_error_survives_en
     )
 
 
-async def test_custom_422_left_untouched_runtime_still_returns_target_code() -> None:
+def test_custom_422_left_untouched_runtime_still_returns_target_code() -> None:
     app = FastAPI()
 
     class MyCustom422(BaseModel):  # pragma: no cover
@@ -1207,8 +1203,8 @@ async def test_custom_422_left_untouched_runtime_still_returns_target_code() -> 
 
     override_validation_error(app, status_code=status.HTTP_400_BAD_REQUEST)
 
-    async with _client(app) as client:
-        response = await client.post("/items", json={"name": "test"})  # missing price -> real validation error
+    with TestClient(app) as client:
+        response = client.post("/items", json={"name": "test"})  # missing price -> real validation error
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert "detail" in response.json()
@@ -1217,7 +1213,7 @@ async def test_custom_422_left_untouched_runtime_still_returns_target_code() -> 
 # ── override_validation_error: merge_target_response=False (end-to-end) ─────
 
 
-async def test_merge_target_response_false_leaves_declared_response_untouched() -> None:
+def test_merge_target_response_false_leaves_declared_response_untouched() -> None:
     app = FastAPI()
 
     @app.post("/items", responses={400: {"description": "Custom Bad Request"}})
@@ -1225,15 +1221,15 @@ async def test_merge_target_response_false_leaves_declared_response_untouched() 
 
     override_validation_error(app, status_code=status.HTTP_400_BAD_REQUEST, merge_target_response=False)
 
-    async with _client(app) as client:
-        schema = (await client.get("/openapi.json")).json()
+    with TestClient(app) as client:
+        schema = client.get("/openapi.json").json()
 
     response_400 = schema["paths"]["/items"]["post"]["responses"]["400"]
     assert response_400["description"] == "Custom Bad Request"
     assert "content" not in response_400
 
 
-async def test_merge_target_response_false_still_synthesizes_when_target_undeclared() -> None:
+def test_merge_target_response_false_still_synthesizes_when_target_undeclared() -> None:
     app = FastAPI()
 
     @app.post("/items")
@@ -1241,8 +1237,8 @@ async def test_merge_target_response_false_still_synthesizes_when_target_undecla
 
     override_validation_error(app, status_code=status.HTTP_400_BAD_REQUEST, merge_target_response=False)
 
-    async with _client(app) as client:
-        schema = (await client.get("/openapi.json")).json()
+    with TestClient(app) as client:
+        schema = client.get("/openapi.json").json()
 
     responses = schema["paths"]["/items"]["post"]["responses"]
     assert "422" not in responses
@@ -1325,7 +1321,7 @@ def test_patch_422_skips_non_dict_entries_in_webhooks_and_callbacks() -> None:
     assert "400" in result["paths"]["/items"]["post"]["callbacks"]["ok"]["{$callback_url}"]["post"]["responses"]
 
 
-async def test_webhooks_and_callbacks_patched_end_to_end() -> None:
+def test_webhooks_and_callbacks_patched_end_to_end() -> None:
     from fastapi import APIRouter
 
     callback_router: APIRouter = APIRouter()
@@ -1344,8 +1340,8 @@ async def test_webhooks_and_callbacks_patched_end_to_end() -> None:
 
     override_validation_error(app, status_code=status.HTTP_400_BAD_REQUEST)
 
-    async with _client(app) as client:
-        schema = (await client.get("/openapi.json")).json()
+    with TestClient(app) as client:
+        schema = client.get("/openapi.json").json()
 
     webhook_responses = schema["webhooks"]["new-item"]["post"]["responses"]
     assert "422" not in webhook_responses
