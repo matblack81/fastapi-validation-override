@@ -8,6 +8,7 @@
 
 ### Internal
 
+* 👷 Test against the actual latest FastAPI in CI. PR [#94](https://github.com/matblack81/fastapi-validation-override/pull/94) by [@matblack81](https://github.com/matblack81).
 * ✅ Migrate the test suite to TestClient. PR [#93](https://github.com/matblack81/fastapi-validation-override/pull/93) by [@matblack81](https://github.com/matblack81).
 
 ## 1.2.3 (2026-10-16)
