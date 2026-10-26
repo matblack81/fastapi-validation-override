@@ -2,6 +2,8 @@
 
 ## Latest Changes
 
+## 1.2.4 (2026-10-26)
+
 ### Docs
 
 * 🔧 Replace old GitHub username in release notes links. PR [#92](https://github.com/matblack81/fastapi-validation-override/pull/92) by [@matblack81](https://github.com/matblack81).
