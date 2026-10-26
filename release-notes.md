@@ -8,6 +8,7 @@
 
 ### Internal
 
+* 🔧 Allow the certifi package name in typos. PR [#97](https://github.com/matblack81/fastapi-validation-override/pull/97) by [@matblack81](https://github.com/matblack81).
 * 👷 Run the FastAPI master workflow daily. PR [#96](https://github.com/matblack81/fastapi-validation-override/pull/96) by [@matblack81](https://github.com/matblack81).
 * 👷 Add a weekly CI run against FastAPI master. PR [#95](https://github.com/matblack81/fastapi-validation-override/pull/95) by [@matblack81](https://github.com/matblack81).
 * 👷 Test against the actual latest FastAPI in CI. PR [#94](https://github.com/matblack81/fastapi-validation-override/pull/94) by [@matblack81](https://github.com/matblack81).
