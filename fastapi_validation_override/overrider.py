@@ -220,6 +220,7 @@ def override_validation_error(
     """
     if isinstance(status_code, bool) or not isinstance(status_code, int):
         raise TypeError(f"status_code must be an int, got {type(status_code).__name__}: {status_code!r}")
+    status_code = int(status_code)
     if not (100 <= status_code <= 599):
         raise ValueError(f"status_code must be a valid HTTP status code (100-599), got {status_code}")
     if status_code < 200 or status_code in (204, 304):
