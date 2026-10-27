@@ -849,10 +849,9 @@ def test_patch_422_model_named_like_http_validation_error_is_not_mistaken_for_it
 def test_resolve_validation_ref_no_collision_uses_standard_names() -> None:
     schema: dict[str, Any] = {}
 
-    ref, name = overrider_module._resolve_validation_ref(schema)
+    name = overrider_module._resolve_validation_ref(schema)
 
     assert name == "HTTPValidationError"
-    assert ref == {"$ref": f"{REF_PREFIX}HTTPValidationError"}
     schemas = schema["components"]["schemas"]
     assert schemas["ValidationError"] == fastapi_openapi_utils.validation_error_definition
     assert schemas["HTTPValidationError"] == fastapi_openapi_utils.validation_error_response_definition
@@ -868,20 +867,18 @@ def test_resolve_validation_ref_reuses_existing_matching_components() -> None:
         }
     }
 
-    ref, name = overrider_module._resolve_validation_ref(schema)
+    name = overrider_module._resolve_validation_ref(schema)
 
     assert name == "HTTPValidationError"
-    assert ref == {"$ref": f"{REF_PREFIX}HTTPValidationError"}
 
 
 def test_resolve_validation_ref_rewrites_nested_ref_on_validation_error_collision() -> None:
     schema = {"components": {"schemas": {"ValidationError": {"type": "string"}}}}
 
-    ref, name = overrider_module._resolve_validation_ref(schema)
+    name = overrider_module._resolve_validation_ref(schema)
 
     # HTTPValidationError itself has no collision here, so it keeps the standard name...
     assert name == "HTTPValidationError"
-    assert ref == {"$ref": f"{REF_PREFIX}HTTPValidationError"}
     schemas = schema["components"]["schemas"]
     assert schemas["ValidationError"] == {"type": "string"}
     assert schemas["FastAPIValidationOverride_ValidationError"] == fastapi_openapi_utils.validation_error_definition
@@ -917,23 +914,21 @@ def test_resolve_validation_ref_rewrites_nested_ref_regardless_of_field_name() -
     }
     try:
         schema = {"components": {"schemas": {"ValidationError": {"type": "string"}}}}
-        ref, name = overrider_module._resolve_validation_ref(schema)
+        name = overrider_module._resolve_validation_ref(schema)
     finally:
         fastapi_openapi_utils.validation_error_response_definition = original_http_validation_error
 
     assert name == "HTTPValidationError"
     nested_ref = schema["components"]["schemas"]["HTTPValidationError"]["properties"]["dettagli"]["items"]["$ref"]
     assert nested_ref == f"{REF_PREFIX}FastAPIValidationOverride_ValidationError"
-    assert ref == {"$ref": f"{REF_PREFIX}HTTPValidationError"}
 
 
 def test_resolve_validation_ref_renames_only_http_validation_error_on_its_own_collision() -> None:
     schema = {"components": {"schemas": {"HTTPValidationError": {"type": "string"}}}}
 
-    ref, name = overrider_module._resolve_validation_ref(schema)
+    name = overrider_module._resolve_validation_ref(schema)
 
     assert name == "FastAPIValidationOverride_HTTPValidationError"
-    assert ref == {"$ref": f"{REF_PREFIX}FastAPIValidationOverride_HTTPValidationError"}
     schemas = schema["components"]["schemas"]
     assert schemas["HTTPValidationError"] == {"type": "string"}
     assert schemas["ValidationError"] == fastapi_openapi_utils.validation_error_definition
@@ -955,13 +950,12 @@ def test_resolve_validation_ref_reads_definitions_dynamically() -> None:
         fastapi_openapi_utils.validation_error_response_definition = custom_http_validation_error
 
         schema: dict[str, Any] = {}
-        ref, name = overrider_module._resolve_validation_ref(schema)
+        name = overrider_module._resolve_validation_ref(schema)
     finally:
         fastapi_openapi_utils.validation_error_definition = original_validation_error
         fastapi_openapi_utils.validation_error_response_definition = original_http_validation_error
 
     assert name == "HTTPValidationError"
-    assert ref == {"$ref": f"{REF_PREFIX}HTTPValidationError"}
     schemas = schema["components"]["schemas"]
     assert schemas["ValidationError"] == custom_validation_error
     assert schemas["HTTPValidationError"] == custom_http_validation_error

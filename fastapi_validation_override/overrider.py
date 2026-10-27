@@ -1,6 +1,9 @@
-from collections.abc import Iterator
+import inspect
+
+from collections.abc import Callable, Iterator
 from copy import deepcopy
-from typing import Any
+from functools import partial
+from typing import Any, get_type_hints
 
 import fastapi.openapi.utils as fastapi_openapi_utils
 
@@ -68,12 +71,20 @@ def _replace_ref(value: Any, old_ref: str, new_ref: str) -> None:
             _replace_ref(child, old_ref, new_ref)
 
 
-def _resolve_validation_ref(schema: dict[str, Any]) -> tuple[dict[str, str], str]:
+def _references(value: Any, ref: str) -> bool:
+    if isinstance(value, dict):
+        return value.get("$ref") == ref or any(_references(child, ref) for child in value.values())
+    if isinstance(value, list):
+        return any(_references(child, ref) for child in value)
+    return False
+
+
+def _resolve_validation_ref(schema: dict[str, Any]) -> str:
     """
     Ensure ValidationError/HTTPValidationError components exist in `schema`, picking an alternate
-    name for either one the schema already declares for something else. Returns a $ref to the
-    HTTPValidationError component and the name it is registered under — inserted by this call if
-    absent, or an already-matching component left untouched.
+    name for either one the schema already declares for something else. Returns the name the
+    HTTPValidationError component is registered under — inserted by this call if absent, or an
+    already-matching component left untouched.
     """
     components = schema.setdefault("components", {}).setdefault("schemas", {})
 
@@ -99,7 +110,44 @@ def _resolve_validation_ref(schema: dict[str, Any]) -> tuple[dict[str, str], str
     if http_validation_error_name not in components:
         components[http_validation_error_name] = http_validation_error_def
 
-    return _validation_error_ref(http_validation_error_name), http_validation_error_name
+    return http_validation_error_name
+
+
+def _resolve_model_ref(schema: dict[str, Any], model: Any) -> str:
+    """
+    Insert `model` and the models it nests into `schema`'s components, reusing any identical
+    component already there. If a name is taken by a different definition, all of them go under
+    namespaced names, so the $refs between them stay consistent. Returns the model's component name.
+    """
+    components = schema.setdefault("components", {}).setdefault("schemas", {})
+
+    name: str = model.__name__
+    model_schema = model.model_json_schema(mode="serialization", ref_template=f"{REF_PREFIX}{{model}}")
+    definitions: dict[str, Any] = model_schema.pop("$defs", {})
+    # A self-referencing model is already in $defs, and its top level is only a $ref to it
+    definitions.setdefault(name, model_schema)
+
+    if any(components.get(def_name, definition) != definition for def_name, definition in definitions.items()):
+        for def_name in list(definitions):
+            _replace_ref(definitions, f"{REF_PREFIX}{def_name}", f"{REF_PREFIX}FastAPIValidationOverride_{def_name}")
+        definitions = {f"FastAPIValidationOverride_{def_name}": d for def_name, d in definitions.items()}
+        name = f"FastAPIValidationOverride_{name}"
+
+    for def_name, definition in definitions.items():
+        components.setdefault(def_name, definition)
+
+    return name
+
+
+def _drop_unreferenced_validation_components(schema: dict[str, Any]) -> None:
+    """FastAPI declares these for every app that validates, whether or not anything still points at them."""
+    components = schema.get("components", {}).get("schemas", {})
+    for name, definition in (
+        ("HTTPValidationError", fastapi_openapi_utils.validation_error_response_definition),
+        ("ValidationError", fastapi_openapi_utils.validation_error_definition),
+    ):
+        if components.get(name) == definition and not _references(schema, f"{REF_PREFIX}{name}"):
+            del components[name]
 
 
 def patch_422_responses(
@@ -132,7 +180,14 @@ def patch_422_responses(
         doesn't resolve `$ref`s.
     :return: The same `schema` dict, mutated in place.
     """
-    validation: tuple[dict[str, str], str] | None = None
+    operations = _remove_fastapi_422_responses(schema)
+    _document_validation_responses(schema, operations, target_code, merge_target_response, _resolve_validation_ref)
+    return schema
+
+
+def _remove_fastapi_422_responses(schema: dict[str, Any]) -> list[dict[str, Any]]:
+    """Returns the operations that validate input, the ones whose FastAPI 422 response was removed included."""
+    operations = []
 
     for operation in _iter_operations(schema):
         responses = operation.setdefault("responses", {})
@@ -145,8 +200,24 @@ def patch_422_responses(
                 del responses["422"]
                 removed_fastapi_422 = True
 
-        if not (removed_fastapi_422 or _operation_needs_validation(operation)):
-            continue
+        if removed_fastapi_422 or _operation_needs_validation(operation):
+            operations.append(operation)
+
+    return operations
+
+
+def _document_validation_responses(
+    schema: dict[str, Any],
+    operations: list[dict[str, Any]],
+    target_code: str,
+    merge_target_response: bool,
+    resolve_component: Callable[[dict[str, Any]], str],
+) -> None:
+    """`resolve_component` registers the error body's component in `schema` and returns its name."""
+    component_name: str | None = None
+
+    for operation in operations:
+        responses = operation["responses"]
 
         if target_code in responses:
             if not merge_target_response:
@@ -156,35 +227,32 @@ def patch_422_responses(
             if "$ref" in existing_response:
                 continue
 
-            if validation is None:
-                validation = _resolve_validation_ref(schema)
-            validation_ref, validation_ref_name = validation
+            if component_name is None:
+                component_name = resolve_component(schema)
+            validation_ref = _validation_error_ref(component_name)
 
             existing_content = existing_response.setdefault("content", {}).setdefault("application/json", {})
             existing_schema = existing_content.setdefault("schema", {})
 
             if "anyOf" in existing_schema:
                 if validation_ref not in existing_schema["anyOf"]:
-                    existing_schema["anyOf"].insert(0, _validation_error_ref(validation_ref_name))
+                    existing_schema["anyOf"].insert(0, _validation_error_ref(component_name))
             elif existing_schema and existing_schema != validation_ref:
-                existing_content["schema"] = {"anyOf": [_validation_error_ref(validation_ref_name), existing_schema]}
+                existing_content["schema"] = {"anyOf": [_validation_error_ref(component_name), existing_schema]}
             elif not existing_schema:
-                existing_content["schema"] = _validation_error_ref(validation_ref_name)
+                existing_content["schema"] = _validation_error_ref(component_name)
 
             old_desc = existing_response.get("description", "Error")
             if "Validation Error" not in old_desc:
                 existing_response["description"] = f"{old_desc} / Validation Error"
         else:
-            if validation is None:
-                validation = _resolve_validation_ref(schema)
-            validation_ref_name = validation[1]
+            if component_name is None:
+                component_name = resolve_component(schema)
 
             responses[target_code] = {
                 "description": "Validation Error",
-                "content": {"application/json": {"schema": _validation_error_ref(validation_ref_name)}},
+                "content": {"application/json": {"schema": _validation_error_ref(component_name)}},
             }
-
-    return schema
 
 
 def override_validation_error(
@@ -192,6 +260,7 @@ def override_validation_error(
     status_code: int = 400,
     handle_exceptions: bool = True,
     merge_target_response: bool = True,
+    error_builder: Callable[[RequestValidationError], Any] | None = None,
 ) -> None:
     """
     Override FastAPI's default 422 validation error response with a custom status code.
@@ -204,19 +273,27 @@ def override_validation_error(
 
     :param app: The FastAPI application instance to patch.
     :param status_code: The HTTP status code to use instead of 422. Defaults to 400. Passing 422
-        is a no-op: the app is left completely unpatched, matching FastAPI's own default.
+        without `error_builder` is a no-op: the app is left completely unpatched, matching
+        FastAPI's own default.
     :param handle_exceptions: If True, registers an exception handler that returns the custom
         status code at runtime. Set to False to patch only the OpenAPI schema and
         handle the exception yourself.
     :param merge_target_response: If True (default), a response you already declared at
         `status_code` is merged with the validation error schema using `anyOf`. If False,
         it is left untouched.
+    :param error_builder: A regular (not async) function that turns the `RequestValidationError`
+        into the response body, annotated with a Pydantic model as its return type. The handler
+        returns what it builds, and the schema documents that model at `status_code` instead of
+        `HTTPValidationError`, on the operations that validate input. FastAPI's
+        `HTTPValidationError`/`ValidationError` components are then removed, unless something in
+        the schema still references them.
     :return: None. `app` is patched in place.
     :raises TypeError: If `status_code` is not an `int` (a `bool` is also rejected, since it's
-        technically an `int` subclass in Python).
+        technically an `int` subclass in Python), or if `error_builder` is async or its return
+        annotation is not a Pydantic model.
     :raises ValueError: If `status_code` is not a valid HTTP status code (100-599), or is one of
         the codes that must not carry a response body (1xx, 204, 304) — this library always
-        returns one.
+        returns one — or if `error_builder` is passed with `handle_exceptions=False`.
     """
     if isinstance(status_code, bool) or not isinstance(status_code, int):
         raise TypeError(f"status_code must be an int, got {type(status_code).__name__}: {status_code!r}")
@@ -228,7 +305,17 @@ def override_validation_error(
             f"status_code {status_code} does not support a response body, but this library always sends one"
         )
 
-    if status_code == 422:
+    error_model: Any = None
+    if error_builder is not None:
+        if not handle_exceptions:
+            raise ValueError("error_builder requires handle_exceptions=True: it builds the body that handler returns")
+        if inspect.iscoroutinefunction(error_builder):
+            raise TypeError("error_builder must be a regular function, not async")
+        error_model = get_type_hints(error_builder).get("return")
+        if not (isinstance(error_model, type) and hasattr(error_model, "model_json_schema")):
+            raise TypeError(f"error_builder must declare a Pydantic model as its return type, got {error_model!r}")
+
+    if status_code == 422 and error_builder is None:
         return
 
     if getattr(app.state, "_validation_overridden", False):
@@ -238,16 +325,22 @@ def override_validation_error(
 
         @app.exception_handler(RequestValidationError)
         async def custom_validation_exception_handler(_request: Request, exc: RequestValidationError) -> JSONResponse:
-            return JSONResponse(
-                status_code=status_code,
-                content={"detail": jsonable_encoder(exc.errors())},
-            )
+            body = error_builder(exc) if error_builder is not None else {"detail": exc.errors()}
+            return JSONResponse(status_code=status_code, content=jsonable_encoder(body))
 
     target_code = str(status_code)
     original_openapi = app.openapi
+    resolve_component = (
+        _resolve_validation_ref if error_model is None else partial(_resolve_model_ref, model=error_model)
+    )
 
     def custom_openapi() -> dict[str, Any]:
-        schema = patch_422_responses(original_openapi(), target_code, merge_target_response=merge_target_response)
+        schema = original_openapi()
+        operations = _remove_fastapi_422_responses(schema)
+        if error_model is not None:
+            # Before the model is registered, so its names don't collide with components about to go
+            _drop_unreferenced_validation_components(schema)
+        _document_validation_responses(schema, operations, target_code, merge_target_response, resolve_component)
         app.openapi_schema = schema
         return app.openapi_schema
 
