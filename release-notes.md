@@ -10,6 +10,10 @@
 
 * 🐛 Fix HTTPStatus status codes in the OpenAPI schema on Python 3.10. PR [#104](https://github.com/matblack81/fastapi-validation-override/pull/104) by [@matblack81](https://github.com/matblack81).
 
+### Docs
+
+* 📝 Add the error builder section and its known limitation. PR [#106](https://github.com/matblack81/fastapi-validation-override/pull/106) by [@matblack81](https://github.com/matblack81).
+
 ### Internal
 
 * 💡 Fix the snapshot regeneration command for new examples. PR [#103](https://github.com/matblack81/fastapi-validation-override/pull/103) by [@matblack81](https://github.com/matblack81).
