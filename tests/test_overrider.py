@@ -1,4 +1,5 @@
 from copy import deepcopy
+from http import HTTPStatus
 from typing import Any
 
 import fastapi.openapi.utils as fastapi_openapi_utils
@@ -443,6 +444,22 @@ def test_status_code_within_valid_range_is_accepted(status_code: int) -> None:
     async def create_item(item: Item) -> dict[str, Any]: ...
 
     override_validation_error(app, status_code=status_code)
+
+
+def test_status_code_httpstatus_is_documented_as_plain_code() -> None:
+    app = FastAPI()
+
+    @app.post("/items")
+    async def create_item(item: Item) -> dict[str, Any]: ...
+
+    override_validation_error(app, status_code=HTTPStatus.BAD_REQUEST)
+
+    with TestClient(app) as client:
+        schema = client.get("/openapi.json").json()
+        response = client.post("/items", json={"name": "test"})  # missing price
+
+    assert set(schema["paths"]["/items"]["post"]["responses"]) == {"200", "400"}
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
 
 
 @pytest.mark.parametrize("status_code", [100, 101, 199, 204, 304])
