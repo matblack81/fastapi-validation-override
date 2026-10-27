@@ -2,6 +2,10 @@
 
 ## Latest Changes
 
+### Features
+
+* ✨ Add `error_builder` to replace the validation error body and its schema. PR [#105](https://github.com/matblack81/fastapi-validation-override/pull/105) by [@matblack81](https://github.com/matblack81).
+
 ### Fixes
 
 * 🐛 Fix HTTPStatus status codes in the OpenAPI schema on Python 3.10. PR [#104](https://github.com/matblack81/fastapi-validation-override/pull/104) by [@matblack81](https://github.com/matblack81).
