@@ -40,6 +40,10 @@ SCHEMAS = snapshot(
             "paths": {"/items": {"post": ["200", "400"]}},
             "components": ["HTTPValidationError", "ValidationError"],
         },
+        "error_builder": {
+            "paths": {"/items": {"post": ["200", "400"]}, "/health": {"get": ["200"]}},
+            "components": [],
+        },
         "existing_response_at_target_code": {
             "paths": {"/items": {"post": ["200", "400"]}},
             "components": ["HTTPValidationError", "ValidationError"],
