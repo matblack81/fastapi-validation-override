@@ -4,6 +4,7 @@
 
 ### Internal
 
+* ✅ Snapshot the response codes of every example. PR [#102](https://github.com/matblack81/fastapi-validation-override/pull/102) by [@matblack81](https://github.com/matblack81).
 * 🔥 Remove the leftover sync-pin markers from the workflows. PR [#101](https://github.com/matblack81/fastapi-validation-override/pull/101) by [@matblack81](https://github.com/matblack81).
 * 👷 Install only the tests dependency group in the test workflows. PR [#100](https://github.com/matblack81/fastapi-validation-override/pull/100) by [@matblack81](https://github.com/matblack81).
 * 🔧 Split the dev dependencies into a tests group. PR [#99](https://github.com/matblack81/fastapi-validation-override/pull/99) by [@matblack81](https://github.com/matblack81).
