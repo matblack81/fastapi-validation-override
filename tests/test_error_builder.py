@@ -11,21 +11,21 @@ from pydantic import BaseModel
 from fastapi_validation_override import override_validation_error
 
 
-class Item(BaseModel):
+class Item(BaseModel):  # pragma: no cover
     name: str
 
 
-class FieldError(BaseModel):
+class FieldError(BaseModel):  # pragma: no cover
     field: str
     message: str
 
 
-class ErrorEnvelope(BaseModel):
+class ErrorEnvelope(BaseModel):  # pragma: no cover
     code: str = "VALIDATION_ERROR"
     errors: list[FieldError]
 
 
-class OutOfStock(BaseModel):
+class OutOfStock(BaseModel):  # pragma: no cover
     item_name: str
 
 
@@ -126,7 +126,7 @@ def test_model_already_used_by_a_route_is_reused() -> None:
 
 
 def test_model_name_taken_by_a_different_model_is_namespaced() -> None:
-    class ErrorEnvelope(BaseModel):
+    class ErrorEnvelope(BaseModel):  # pragma: no cover
         message: str
 
     app = FastAPI()
@@ -149,14 +149,16 @@ def test_model_name_taken_by_a_different_model_is_namespaced() -> None:
 
 
 def test_model_named_like_fastapi_components_takes_their_place() -> None:
-    class ValidationError(BaseModel):
+    class ValidationError(BaseModel):  # pragma: no cover
         field: str
 
-    class HTTPValidationError(BaseModel):
+    class HTTPValidationError(BaseModel):  # pragma: no cover
         errors: list[ValidationError]
 
     def build(exc: RequestValidationError) -> HTTPValidationError:
-        return HTTPValidationError(errors=[ValidationError(field=str(error["loc"])) for error in exc.errors()])
+        return HTTPValidationError(
+            errors=[ValidationError(field=".".join(map(str, error["loc"]))) for error in exc.errors()]
+        )
 
     app = FastAPI()
 
@@ -165,8 +167,11 @@ def test_model_named_like_fastapi_components_takes_their_place() -> None:
 
     override_validation_error(app, error_builder=build)
 
-    schema = app.openapi()
+    with TestClient(app) as client:
+        schema = client.get("/openapi.json").json()
+        response = client.post("/items", json={})
 
+    assert response.json() == {"errors": [{"field": "body.name"}]}
     components = schema["components"]["schemas"]
     assert set(components) == {"Item", "HTTPValidationError", "ValidationError"}
     assert components["HTTPValidationError"]["properties"]["errors"]["items"] == {
@@ -214,7 +219,7 @@ def test_status_code_422_replaces_the_body_and_the_schema() -> None:
 
 
 def test_self_referencing_model_is_registered_as_its_definition() -> None:
-    class Problem(BaseModel):
+    class Problem(BaseModel):  # pragma: no cover
         detail: str
         causes: list["Problem"] = []
 
