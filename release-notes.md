@@ -4,6 +4,7 @@
 
 ### Internal
 
+* 👷 Install only the tests dependency group in the test workflows. PR [#100](https://github.com/matblack81/fastapi-validation-override/pull/100) by [@matblack81](https://github.com/matblack81).
 * 🔧 Split the dev dependencies into a tests group. PR [#99](https://github.com/matblack81/fastapi-validation-override/pull/99) by [@matblack81](https://github.com/matblack81).
 
 ## 1.2.4 (2026-10-26)
