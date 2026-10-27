@@ -16,8 +16,8 @@ EXAMPLE_FILES = sorted(EXAMPLES_DIR.glob("*.py"))
 
 # For each example: the response codes of every operation (paths, webhooks, callbacks) and the
 # validation error components. Only what the package decides, so it holds across the whole
-# FastAPI matrix. Regenerate with `pytest tests/test_examples.py --inline-snapshot=fix` and read
-# the diff.
+# FastAPI matrix. Regenerate with `pytest tests/test_examples.py --fix` and read the diff:
+# `--inline-snapshot=fix` alone corrects existing entries but doesn't add a new example's.
 SCHEMAS = snapshot(
     {
         "basic": {
