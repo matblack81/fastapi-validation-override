@@ -21,7 +21,7 @@ def create_item(item: Item) -> Item:
 # --8<-- [start:snippet]
 @app.exception_handler(RequestValidationError)
 async def validation_handler(
-    request: Request, exc: RequestValidationError
+    _request: Request, exc: RequestValidationError
 ) -> JSONResponse:
     return JSONResponse(
         status_code=400,
