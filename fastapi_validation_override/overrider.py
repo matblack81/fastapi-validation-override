@@ -292,13 +292,14 @@ def override_validation_error(
     error_builder: Annotated[
         Callable[[RequestValidationError], Any] | None,
         Doc(
-            "A regular (not async) function that turns the `RequestValidationError` into the "
-            "response body, with a Pydantic model as its return annotation. The handler returns what "
-            "it builds, and the schema documents that model at `status_code` instead of "
-            "`HTTPValidationError`, on the operations that validate input. FastAPI's "
-            "`HTTPValidationError`/`ValidationError` components are then removed, unless something "
-            'in the schema still references them. If `None`, the body is `{"detail": [...]}`, as '
-            "in FastAPI."
+            "A function, regular or async, that turns the `RequestValidationError` into the response "
+            "body, with a Pydantic model as its return annotation. The schema documents that model "
+            "at `status_code` instead of `HTTPValidationError`, on the operations that validate "
+            "input, and FastAPI's `HTTPValidationError`/`ValidationError` components are removed, "
+            "unless something in the schema still references them. The built-in handler returns "
+            "what the function builds; with `handle_exceptions=False` the function only sets the "
+            "documented model, and your own handler can call it to send the same body. If `None`, "
+            'the body is `{"detail": [...]}`, as in FastAPI.'
         ),
     ] = None,
     media_type: Annotated[
@@ -323,11 +324,10 @@ def override_validation_error(
     with different arguments. Passing `status_code=422` without `error_builder` and with the
     default `media_type` is a no-op too: the app is left unpatched, as in FastAPI.
 
-    Raises `TypeError` if `status_code` is not an `int` (a `bool` is rejected too), or if
-    `error_builder` is async or its return annotation is not a Pydantic model. Raises
-    `ValueError` if `status_code` is outside 100-599 or can't carry a body, if `media_type` is
-    not a JSON content type, or if `error_builder` is passed with `handle_exceptions=False`.
-    Nothing is registered on the app when it raises.
+    Raises `TypeError` if `status_code` is not an `int` (a `bool` is rejected too), or if the
+    return annotation of `error_builder` is not a Pydantic model. Raises `ValueError` if
+    `status_code` is outside 100-599 or can't carry a body, or if `media_type` is not a JSON
+    content type. Nothing is registered on the app when it raises.
     """
     if isinstance(status_code, bool) or not isinstance(status_code, int):
         raise TypeError(f"status_code must be an int, got {type(status_code).__name__}: {status_code!r}")
@@ -343,10 +343,6 @@ def override_validation_error(
 
     error_model: Any = None
     if error_builder is not None:
-        if not handle_exceptions:
-            raise ValueError("error_builder requires handle_exceptions=True: it builds the body that handler returns")
-        if inspect.iscoroutinefunction(error_builder):
-            raise TypeError("error_builder must be a regular function, not async")
         error_model = get_type_hints(error_builder).get("return")
         if not (isinstance(error_model, type) and hasattr(error_model, "model_json_schema")):
             raise TypeError(f"error_builder must declare a Pydantic model as its return type, got {error_model!r}")
@@ -362,6 +358,8 @@ def override_validation_error(
         @app.exception_handler(RequestValidationError)
         async def custom_validation_exception_handler(_request: Request, exc: RequestValidationError) -> JSONResponse:
             body = error_builder(exc) if error_builder is not None else {"detail": exc.errors()}
+            if inspect.isawaitable(body):
+                body = await body
             return JSONResponse(status_code=status_code, content=jsonable_encoder(body), media_type=media_type)
 
     target_code = str(status_code)

@@ -63,6 +63,7 @@ SCHEMAS = snapshot(
             "paths": {"/items": {"post": ["200", "400"]}},
             "components": ["HTTPValidationError", "ValidationError"],
         },
+        "options/error_builder_handler": {"paths": {"/items": {"post": ["200", "400"]}}, "components": []},
     }
 )
 

@@ -279,21 +279,47 @@ def test_builder_without_a_model_return_type_is_rejected(builder: Any) -> None:
     assert not getattr(app.state, "_validation_overridden", False)
 
 
-def test_async_builder_is_rejected() -> None:
-    async def build(exc: RequestValidationError) -> ErrorEnvelope: ...
+def test_async_builder_is_awaited() -> None:
+    async def build(exc: RequestValidationError) -> ErrorEnvelope:
+        return build_envelope(exc)
 
     app = FastAPI()
 
-    with pytest.raises(TypeError, match="not async"):
-        override_validation_error(app, error_builder=build)
+    @app.post("/items")
+    async def create_item(item: Item) -> None: ...
 
-    assert not getattr(app.state, "_validation_overridden", False)
+    override_validation_error(app, error_builder=build)
+
+    with TestClient(app) as client:
+        response = client.post("/items", json={})
+        schema = client.get("/openapi.json").json()
+
+    assert response.status_code == 400
+    assert response.json() == {
+        "code": "VALIDATION_ERROR",
+        "errors": [{"field": "body.name", "message": "Field required"}],
+    }
+    assert schema["paths"]["/items"]["post"]["responses"]["400"]["content"]["application/json"]["schema"] == {
+        "$ref": f"{REF_PREFIX}ErrorEnvelope"
+    }
 
 
-def test_builder_with_handle_exceptions_false_is_rejected() -> None:
+def test_builder_with_handle_exceptions_false_only_sets_the_documented_model() -> None:
     app = FastAPI()
 
-    with pytest.raises(ValueError, match="handle_exceptions=True"):
-        override_validation_error(app, handle_exceptions=False, error_builder=build_envelope)
+    @app.post("/items")
+    async def create_item(item: Item) -> None: ...
 
-    assert not getattr(app.state, "_validation_overridden", False)
+    override_validation_error(app, handle_exceptions=False, error_builder=build_envelope)
+
+    with TestClient(app) as client:
+        response = client.post("/items", json={})
+        schema = client.get("/openapi.json").json()
+
+    assert schema["paths"]["/items"]["post"]["responses"]["400"]["content"]["application/json"]["schema"] == {
+        "$ref": f"{REF_PREFIX}ErrorEnvelope"
+    }
+    assert "HTTPValidationError" not in schema["components"]["schemas"]
+    # No handler was registered: FastAPI answers on its own, with its body, not the builder's
+    assert response.status_code == 422
+    assert set(response.json()) == {"detail"}
