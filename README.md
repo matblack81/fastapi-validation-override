@@ -17,10 +17,11 @@ FastAPI returns 422 Unprocessable Entity for every request validation failure. M
 - **Independent of a custom 422**: if a route keeps its own, non-validation 422 response, it's left untouched and the validation schema is still documented at the target code
 - **Custom openapi preserved**: wraps any `app.openapi` function already installed and applies the patch on top of its output
 - **Custom error body**: `error_builder` returns your own Pydantic model at runtime and documents that model in the schema
+- **Custom content type**: `media_type` sends and documents the validation error under any JSON content type, e.g. `application/problem+json`
 - **Bring your own handler**: `handle_exceptions=False` skips the built-in handler while still patching the schema
 - **Customizable validation schema**: honors `fastapi.openapi.utils.validation_error_definition`/`validation_error_response_definition` if you reassign them before patching (e.g. to match your own error envelope), regardless of field names or structure
 - **Idempotent**: safe to call multiple times on the same app instance. The first call configures the app; subsequent calls are ignored, even with different arguments — dynamic reconfiguration isn't supported
-- **No-op guard**: `status_code=422` without `error_builder` leaves FastAPI behavior unchanged
+- **No-op guard**: `status_code=422` without `error_builder` and with the default `media_type` leaves FastAPI behavior unchanged
 
 ## Requirements
 
@@ -73,16 +74,17 @@ override_validation_error(app, status_code=409)
 ### `override_validation_error`
 
 ```python
-override_validation_error(app, status_code=400, handle_exceptions=True, merge_target_response=True, error_builder=None)
+override_validation_error(app, status_code=400, handle_exceptions=True, merge_target_response=True, error_builder=None, media_type="application/json")
 ```
 
 | Parameter | Type | Default | Description |
 |---|---|---|---|
 | `app` | `FastAPI` | required | The FastAPI application instance to patch |
-| `status_code` | `int` | `400` | HTTP status code to use instead of 422. Must be a valid HTTP status code (`100`-`599`) that supports a response body, since this library always sends one — so `1xx`, `204`, and `304` are rejected. Calling with `422` and no `error_builder` is a no-op. Raises `TypeError` if not an `int` (a `bool` is also rejected), `ValueError` for anything else invalid |
+| `status_code` | `int` | `400` | HTTP status code to use instead of 422. Must be a valid HTTP status code (`100`-`599`) that supports a response body, since this library always sends one — so `1xx`, `204`, and `304` are rejected. Calling with `422`, no `error_builder` and the default `media_type` is a no-op. Raises `TypeError` if not an `int` (a `bool` is also rejected), `ValueError` for anything else invalid |
 | `handle_exceptions` | `bool` | `True` | When `True`, registers an exception handler that returns the custom status code at runtime. Set to `False` to patch only the OpenAPI schema and handle the exception yourself |
 | `merge_target_response` | `bool` | `True` | When `True`, a response you already declared at `status_code` is merged with the validation error schema using `anyOf`. When `False`, it's left untouched |
 | `error_builder` | `Callable[[RequestValidationError], Model] \| None` | `None` | A regular function that builds the response body from the `RequestValidationError`, with a Pydantic model as its return annotation. The handler returns the built body, and the schema documents the model instead of `HTTPValidationError`. See [Error builder](#error-builder). Raises `TypeError` if the function is async or its return annotation isn't a Pydantic model, `ValueError` if combined with `handle_exceptions=False` |
+| `media_type` | `str` | `"application/json"` | The content type the validation error is sent with and documented under. See [Media type](#media-type). Raises `ValueError` if it isn't `application/json` or a content type ending in `+json` |
 
 ### `patch_422_responses`
 
@@ -153,6 +155,42 @@ In the schema:
 `status_code=422` with `error_builder` keeps FastAPI's status code and replaces only the body and its schema.
 
 > **Known limitation:** don't name your models `HTTPValidationError` or `ValidationError` if a route also uses them as its response model. FastAPI adds its own components under those names after the route's models, so that route's response documents FastAPI's definitions instead of yours, with or without this library. Because that response still references FastAPI's components, they aren't removed, and the validation error is documented under `FastAPIValidationOverride_`-prefixed names.
+
+### Media type
+
+`media_type` sets the content type of the validation error, both in the response header and in the schema. Combined with `error_builder`, it returns RFC 9457 Problem Details as `application/problem+json`:
+
+```python
+class Problem(BaseModel):
+    type: str = "about:blank"
+    title: str
+    status: int
+    detail: str
+
+
+def build_problem(exc: RequestValidationError) -> Problem:
+    return Problem(title="Validation failed", status=400, detail=f"{len(exc.errors())} invalid field(s)")
+
+
+override_validation_error(app, error_builder=build_problem, media_type="application/problem+json")
+# a request that fails validation -> 400, content-type: application/problem+json
+```
+
+A response the route already declares at the target code is merged with `anyOf` only under the same content type. Under another content type, it's kept alongside:
+
+```python
+@app.post("/orders", responses={400: {"model": OutOfStock, "description": "Out of stock"}})
+async def create_order(item: Item) -> dict[str, object]: ...
+
+
+# schema at 400:
+#   application/json:         OutOfStock
+#   application/problem+json: Problem
+```
+
+Swagger UI and ReDoc show each error under its own content type, selectable from the media type menu of the 400 response.
+
+Only JSON content types are accepted, since the body is always JSON. `media_type` also works without `error_builder`, with the default `{"detail": [...]}` body. With `handle_exceptions=False`, only the schema uses it: your own handler has to send the same content type.
 
 ### Custom exception handler
 
@@ -274,6 +312,8 @@ Set `merge_target_response=False` to leave a response you already declared at th
 override_validation_error(app, merge_target_response=False)
 ```
 
+With a [`media_type`](#media-type) other than `application/json`, a response declared under `application/json` isn't merged: the two are documented side by side, one per content type.
+
 ### Independent 422 handling
 
 A route can keep its own, non-validation 422 response. As long as the route has a body or parameters that FastAPI validates, it's left untouched at 422, and the validation error is still documented at the target code — independently of what occupies 422.
@@ -315,6 +355,7 @@ Runnable examples are in the [`examples/`](https://github.com/matblack81/fastapi
 | [`custom_422_response.py`](https://github.com/matblack81/fastapi-validation-override/blob/main/examples/custom_422_response.py) | Keeping a custom, non-validation 422 response |
 | [`with_apirouter.py`](https://github.com/matblack81/fastapi-validation-override/blob/main/examples/with_apirouter.py) | Usage with multiple `APIRouter` instances |
 | [`error_builder.py`](https://github.com/matblack81/fastapi-validation-override/blob/main/examples/error_builder.py) | Replacing the error body and its schema with a Pydantic model |
+| [`problem_details.py`](https://github.com/matblack81/fastapi-validation-override/blob/main/examples/problem_details.py) | RFC 9457 Problem Details as `application/problem+json`, next to an `application/json` error at the same code |
 | [`webhooks_and_callbacks.py`](https://github.com/matblack81/fastapi-validation-override/blob/main/examples/webhooks_and_callbacks.py) | Coverage extends to webhooks and callbacks, not just regular paths |
 
 ## Release Notes
