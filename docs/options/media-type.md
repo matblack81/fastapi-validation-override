@@ -38,7 +38,17 @@ A response the route already declares at the target code under another content t
 | `application/json` | `OutOfStock` |
 | `application/problem+json` | `Problem` |
 
-Swagger UI and ReDoc show the two under the media type menu of the `400` response. Under the same content type, the two models are [merged with `anyOf`](merge-target-response.md) instead.
+Swagger UI and ReDoc show the two under the media type menu of the `400` response:
+
+=== "application/json"
+
+    ![Swagger UI, the 400 response of POST /orders with application/json selected: the OutOfStock example, with item_name and available](../assets/screenshots/media-type-json.jpg){ loading=lazy }
+
+=== "application/problem+json"
+
+    ![Swagger UI, the same 400 response with application/problem+json selected: the Problem example, with type, title, status and detail](../assets/screenshots/media-type-problem-json.jpg){ loading=lazy }
+
+Under the same content type, the two models are [merged with `anyOf`](merge-target-response.md) instead.
 
 ## With `handle_exceptions=False`
 

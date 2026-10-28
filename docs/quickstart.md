@@ -25,7 +25,9 @@ A request whose body fails validation, such as `POST /items` with `{"name": "Ham
 }
 ```
 
-In the OpenAPI schema, `POST /items` documents `200` and `400`, and no longer `422`. The `400` response refers to the same `HTTPValidationError` component FastAPI uses for its `422`, so Swagger UI and ReDoc at `/docs` and `/redoc` show the same error, under the new code.
+In the OpenAPI schema, `POST /items` documents `200` and `400`, and no longer `422`. The `400` response refers to the same `HTTPValidationError` component FastAPI uses for its `422`, so Swagger UI and ReDoc at `/docs` and `/redoc` show the same error, under the new code:
+
+![Swagger UI at /docs, the responses of POST /items: 200 Successful Response and 400 Validation Error with the detail body, and no 422](assets/screenshots/quickstart-responses.jpg){ loading=lazy }
 
 ## Another status code
 
