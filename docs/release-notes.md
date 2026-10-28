@@ -18,6 +18,7 @@
 
 ### Docs
 
+* ♻️ Rename unused `request` parameters to `_request` in examples. PR [#124](https://github.com/matblack81/fastapi-validation-override/pull/124) by [@matblack81](https://github.com/matblack81).
 * 📝 Add an example of an error builder that keeps FastAPI's names. PR [#123](https://github.com/matblack81/fastapi-validation-override/pull/123) by [@matblack81](https://github.com/matblack81).
 * 📝 Document error builder models that keep FastAPI's names. PR [#122](https://github.com/matblack81/fastapi-validation-override/pull/122) by [@matblack81](https://github.com/matblack81).
 * 📝 Add screenshots of Swagger UI and ReDoc to the documentation. PR [#119](https://github.com/matblack81/fastapi-validation-override/pull/119) by [@matblack81](https://github.com/matblack81).
