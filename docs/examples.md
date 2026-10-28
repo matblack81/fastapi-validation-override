@@ -1,5 +1,5 @@
 ---
-description: Eleven runnable apps, one per use of override_validation_error.
+description: Twelve runnable apps, one per use of override_validation_error.
 ---
 
 # Examples
@@ -34,6 +34,16 @@ The error body and its schema from a Pydantic model, with `error_builder`.
 
     ```python
     --8<-- "examples/error_builder.py"
+    ```
+
+## `error_builder_fastapi_names.py`
+
+An error builder whose models keep FastAPI's names, `HTTPValidationError` and `ValidationError`, with a body of your own shape.
+
+??? example "Show the code"
+
+    ```python
+    --8<-- "examples/error_builder_fastapi_names.py"
     ```
 
 ## `problem_details.py`
