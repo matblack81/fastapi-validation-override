@@ -10,7 +10,11 @@ When a route already declares a response at the target code, the validation erro
 --8<-- "docs_src/options/merging.py:snippet"
 ```
 
-The `400` of `POST /items` documents `anyOf: [HTTPValidationError, OutOfStock]`, and its description becomes `Out of stock / Validation Error`. At runtime nothing changes: a request that fails validation gets the validation error, and `OutOfStock` is for errors you raise yourself.
+The `400` of `POST /items` documents `anyOf: [HTTPValidationError, OutOfStock]`, and its description becomes `Out of stock / Validation Error`. ReDoc shows the two models as the choices of `Any of`:
+
+![ReDoc, the 400 response of POST /items described as Out of stock / Validation Error, with Any of HTTPValidationError and OutOfStock](../assets/screenshots/merge-redoc.jpg){ loading=lazy }
+
+At runtime nothing changes: a request that fails validation gets the validation error, and `OutOfStock` is for errors you raise yourself.
 
 The merge happens within one content type. With a [`media_type`](media-type.md) other than `application/json`, a response declared under `application/json` is kept next to the validation error instead.
 
