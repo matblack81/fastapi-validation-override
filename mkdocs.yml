@@ -67,6 +67,17 @@ nav:
   - Home: index.md
   - Guide:
       - Quick start: quickstart.md
+      - Options:
+          - options/index.md
+          - Error builder: options/error-builder.md
+          - Media type: options/media-type.md
+          - Merge target response: options/merge-target-response.md
+          - Custom 422 response: options/custom-422-response.md
+          - Handle exceptions: options/handle-exceptions.md
+          - Custom app.openapi: options/custom-openapi.md
+          - Patch 422 responses: options/patch-422-responses.md
+          - Webhooks and callbacks: options/webhooks-and-callbacks.md
+          - Reverse proxy and sub-apps: options/reverse-proxy-and-sub-apps.md
   - Release notes: release-notes.md
 
 plugins:
