@@ -117,3 +117,10 @@ def test_example_imports_and_generates_openapi_schema(example_file: Path) -> Non
     schema = module.app.openapi()
     assert isinstance(schema, dict)
     assert _project(schema) == SCHEMAS[example_file.stem]
+
+
+def test_every_example_is_on_the_examples_page() -> None:
+    page = (EXAMPLES_DIR.parent / "docs" / "examples.md").read_text(encoding="utf-8")
+
+    assert EXAMPLE_FILES
+    assert [path.name for path in EXAMPLE_FILES if f'--8<-- "examples/{path.name}"' not in page] == []

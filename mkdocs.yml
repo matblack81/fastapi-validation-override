@@ -67,6 +67,7 @@ nav:
   - Home: index.md
   - Guide:
       - Quick start: quickstart.md
+      - How it works: how-it-works.md
       - Options:
           - options/index.md
           - Error builder: options/error-builder.md
@@ -78,6 +79,8 @@ nav:
           - Patch 422 responses: options/patch-422-responses.md
           - Webhooks and callbacks: options/webhooks-and-callbacks.md
           - Reverse proxy and sub-apps: options/reverse-proxy-and-sub-apps.md
+  - Reference: reference.md
+  - Examples: examples.md
   - Release notes: release-notes.md
 
 plugins:

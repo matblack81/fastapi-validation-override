@@ -44,3 +44,5 @@ Call it once, when you build the app. Routes added after the call are covered to
 ## Next
 
 The [options](options/index.md) change the body, its content type, and how the validation error combines with responses your routes already declare.
+
+[How it works](how-it-works.md) follows what the call does to the app and to the schema, step by step, and the [examples](examples.md) are complete apps you can run.
