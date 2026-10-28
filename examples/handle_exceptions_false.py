@@ -27,7 +27,7 @@ class Item(BaseModel):
 
 
 @app.exception_handler(RequestValidationError)
-async def custom_handler(request: Request, exc: RequestValidationError) -> JSONResponse:
+async def custom_handler(_request: Request, exc: RequestValidationError) -> JSONResponse:
     return JSONResponse(
         status_code=400,
         content={
