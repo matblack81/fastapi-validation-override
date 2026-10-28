@@ -4,6 +4,7 @@
 
 ### Internal
 
+* ⬆ Bump the python-packages group with 8 updates. PR [#127](https://github.com/matblack81/fastapi-validation-override/pull/127) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump the github-actions group with 5 updates. PR [#126](https://github.com/matblack81/fastapi-validation-override/pull/126) by [@dependabot[bot]](https://github.com/apps/dependabot).
 
 ## 1.3.0 (2026-10-28)
