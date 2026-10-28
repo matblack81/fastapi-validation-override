@@ -4,6 +4,7 @@
 
 ### Internal
 
+* ⬆ Bump annotated-doc from 0.0.4 to 0.0.5. PR [#128](https://github.com/matblack81/fastapi-validation-override/pull/128) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump the python-packages group with 8 updates. PR [#127](https://github.com/matblack81/fastapi-validation-override/pull/127) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump the github-actions group with 5 updates. PR [#126](https://github.com/matblack81/fastapi-validation-override/pull/126) by [@dependabot[bot]](https://github.com/apps/dependabot).
 
