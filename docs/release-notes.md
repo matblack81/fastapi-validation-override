@@ -13,6 +13,7 @@
 
 ### Docs
 
+* 📝 Add screenshots of Swagger UI and ReDoc to the documentation. PR [#119](https://github.com/matblack81/fastapi-validation-override/pull/119) by [@matblack81](https://github.com/matblack81).
 * 📝 Generate the README from the documentation site. PR [#118](https://github.com/matblack81/fastapi-validation-override/pull/118) by [@matblack81](https://github.com/matblack81).
 * 🐛 Fix the import order of the documentation snippets. PR [#117](https://github.com/matblack81/fastapi-validation-override/pull/117) by [@matblack81](https://github.com/matblack81).
 * 📝 Add how it works, the reference and the examples to the documentation site. PR [#116](https://github.com/matblack81/fastapi-validation-override/pull/116) by [@matblack81](https://github.com/matblack81).
