@@ -13,6 +13,7 @@
 
 ### Docs
 
+* 🐛 Fix the import order of the documentation snippets. PR [#117](https://github.com/matblack81/fastapi-validation-override/pull/117) by [@matblack81](https://github.com/matblack81).
 * 📝 Add how it works, the reference and the examples to the documentation site. PR [#116](https://github.com/matblack81/fastapi-validation-override/pull/116) by [@matblack81](https://github.com/matblack81).
 * 📝 Document every option of the override on its own page. PR [#115](https://github.com/matblack81/fastapi-validation-override/pull/115) by [@matblack81](https://github.com/matblack81).
 * 📝 Add the home page and quick start to the documentation site. PR [#114](https://github.com/matblack81/fastapi-validation-override/pull/114) by [@matblack81](https://github.com/matblack81).
