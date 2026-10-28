@@ -52,6 +52,10 @@ SCHEMAS = snapshot(
             "paths": {"/items": {"post": ["200", "400"]}},
             "components": ["HTTPValidationError", "ValidationError"],
         },
+        "problem_details": {
+            "paths": {"/items": {"post": ["200", "400"]}, "/orders": {"post": ["200", "400"]}},
+            "components": [],
+        },
         "webhooks_and_callbacks": {
             "paths": {"/items": {"post": ["200", "400"]}},
             "webhooks": {"item-created": {"post": ["200", "400"]}},
