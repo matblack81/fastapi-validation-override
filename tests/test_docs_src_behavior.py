@@ -195,3 +195,19 @@ def test_sub_app_override_applies_to_the_mounted_app_only() -> None:
     assert set(v2_schema["paths"]["/items"]["post"]["responses"]) == {"200", "400"}
     assert set(schema["paths"]["/items"]["post"]["responses"]) == {"200", "422"}
     assert v2_docs.status_code == 200
+
+
+def test_error_builder_with_your_own_handler_sends_its_header_and_documents_the_model() -> None:
+    with TestClient(load("options/error_builder_handler").app) as client:
+        invalid = client.post("/items", json={"name": "Hammer"})
+        schema = client.get("/openapi.json").json()
+
+    assert invalid.status_code == 400
+    assert invalid.headers["content-language"] == "en"
+    assert invalid.json() == {
+        "code": "VALIDATION_ERROR",
+        "errors": [{"field": "body.price", "message": "Field required"}],
+    }
+    assert schema["paths"]["/items"]["post"]["responses"]["400"]["content"] == {
+        "application/json": {"schema": ref("ErrorEnvelope")}
+    }

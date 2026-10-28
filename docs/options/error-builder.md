@@ -21,7 +21,7 @@ A `POST /items` with `{"name": "Hammer"}` now gets `400` with:
 
 In the schema, the `400` of `POST /items` refers to `ErrorEnvelope`, and `ErrorEnvelope` and `FieldError` are added to `components.schemas`. FastAPI's own `HTTPValidationError` and `ValidationError` components are removed, since nothing refers to them anymore. `GET /health` has no body or parameters, so it can't fail validation and gets no `400`.
 
-The function must be a regular function, not `async`, with a Pydantic model as its return annotation; otherwise `override_validation_error` raises `TypeError`. Combined with `handle_exceptions=False` it raises `ValueError`: the built-in handler is the one that returns what the function builds.
+The function can be regular or `async`, and must have a Pydantic model as its return annotation; otherwise `override_validation_error` raises `TypeError`.
 
 ## Names already in the schema
 
@@ -32,6 +32,16 @@ The function must be a regular function, not `async`, with a Pydantic model as i
 !!! warning "A response model named `HTTPValidationError` documents FastAPI's definition"
 
     FastAPI adds its own components under the names `HTTPValidationError` and `ValidationError` after the models of the routes, so a route whose response model has one of those names documents FastAPI's definition instead of yours, with or without this library. Since that route still refers to FastAPI's component, it isn't removed, and the validation error is documented under the `FastAPIValidationOverride_` names. Give the model another name if a route returns it too.
+
+## With your own exception handler
+
+With `handle_exceptions=False`, the library doesn't call the function: it only reads the model the schema documents. Your own handler calls it, and can add headers, log, or read the request:
+
+```python
+--8<-- "docs_src/options/error_builder_handler.py:snippet"
+```
+
+A request that fails validation gets the `ErrorEnvelope` body with a `Content-Language: en` header, and the schema documents `ErrorEnvelope` at `400`. The status code and the content type your handler sends have to match `status_code` and [`media_type`](media-type.md): the library doesn't check them.
 
 ## With `status_code=422`
 
