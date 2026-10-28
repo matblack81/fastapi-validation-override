@@ -36,3 +36,7 @@ Thumbs.db
 /.claude/
 /CLAUDE.md
 /readme_it.md
+
+# Docs site
+site/
+.cache/
