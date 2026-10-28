@@ -1,3 +1,5 @@
 # The site shows these files in a column about 80 characters wide.
 extend = "../pyproject.toml"
 line-length = 80
+# The package is first-party here too, as in the rest of the repository.
+src = [".."]

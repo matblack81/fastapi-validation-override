@@ -1,8 +1,9 @@
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
-from fastapi_validation_override import override_validation_error
 from pydantic import BaseModel
+
+from fastapi_validation_override import override_validation_error
 
 app = FastAPI()
 
