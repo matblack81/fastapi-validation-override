@@ -45,6 +45,8 @@ Changelog = "https://github.com/matblack81/fastapi-validation-override/blob/main
 [dependency-groups]
 dev = [
     { include-group = "tests" },
+    { include-group = "docs" },
+    { include-group = "screenshots" },
     "ruff>=0.14.0",
     "mypy>=1.17.0",
     "ty>=0.0.28",
@@ -64,6 +66,20 @@ tests = [
     "coverage[toml]>=7.14.1",
     "inline-snapshot >=0.21.1",
     "typer>=0.15.0",
+]
+
+# The docs site. ruff is here on purpose: mkdocstrings uses it to wrap long signatures.
+docs = [
+    "zensical>=0.0.67",
+    "mkdocstrings[python]>=1.0.6",
+    "griffe-typingdoc>=0.3.1",
+    "ruff>=0.14.0",
+]
+
+# scripts/build_icons.py: renders the SVG logo in a real browser
+screenshots = [
+    "playwright>=1.49.0",
+    "pillow>=13.0.0; python_version >= '3.11'",
 ]
 
 [tool.hatch.version]

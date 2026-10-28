@@ -2,6 +2,11 @@ auto-labels:
   docs:
     - README.md
     - release-notes.md
+    - docs/**
+    - docs_src/**
+    - examples/**
+    - mkdocs.yml
+    - overrides/**
   internal:
     - .github/**
     - scripts/**
