@@ -212,6 +212,7 @@ def _document_validation_responses(
     target_code: str,
     merge_target_response: bool,
     resolve_component: Callable[[dict[str, Any]], str],
+    media_type: str = "application/json",
 ) -> None:
     """`resolve_component` registers the error body's component in `schema` and returns its name."""
     component_name: str | None = None
@@ -231,7 +232,7 @@ def _document_validation_responses(
                 component_name = resolve_component(schema)
             validation_ref = _validation_error_ref(component_name)
 
-            existing_content = existing_response.setdefault("content", {}).setdefault("application/json", {})
+            existing_content = existing_response.setdefault("content", {}).setdefault(media_type, {})
             existing_schema = existing_content.setdefault("schema", {})
 
             if "anyOf" in existing_schema:
@@ -251,7 +252,7 @@ def _document_validation_responses(
 
             responses[target_code] = {
                 "description": "Validation Error",
-                "content": {"application/json": {"schema": _validation_error_ref(component_name)}},
+                "content": {media_type: {"schema": _validation_error_ref(component_name)}},
             }
 
 
@@ -261,6 +262,7 @@ def override_validation_error(
     handle_exceptions: bool = True,
     merge_target_response: bool = True,
     error_builder: Callable[[RequestValidationError], Any] | None = None,
+    media_type: str = "application/json",
 ) -> None:
     """
     Override FastAPI's default 422 validation error response with a custom status code.
@@ -273,8 +275,8 @@ def override_validation_error(
 
     :param app: The FastAPI application instance to patch.
     :param status_code: The HTTP status code to use instead of 422. Defaults to 400. Passing 422
-        without `error_builder` is a no-op: the app is left completely unpatched, matching
-        FastAPI's own default.
+        without `error_builder` and with the default `media_type` is a no-op: the app is left
+        completely unpatched, matching FastAPI's own default.
     :param handle_exceptions: If True, registers an exception handler that returns the custom
         status code at runtime. Set to False to patch only the OpenAPI schema and
         handle the exception yourself.
@@ -287,13 +289,18 @@ def override_validation_error(
         `HTTPValidationError`, on the operations that validate input. FastAPI's
         `HTTPValidationError`/`ValidationError` components are then removed, unless something in
         the schema still references them.
+    :param media_type: The content type of the validation error, e.g. `"application/problem+json"`.
+        The handler sends it, and the schema documents the error under it. A response already
+        declared at `status_code` under another content type is kept alongside, not merged with
+        `anyOf`. With `handle_exceptions=False`, your own handler has to send it.
     :return: None. `app` is patched in place.
     :raises TypeError: If `status_code` is not an `int` (a `bool` is also rejected, since it's
         technically an `int` subclass in Python), or if `error_builder` is async or its return
         annotation is not a Pydantic model.
     :raises ValueError: If `status_code` is not a valid HTTP status code (100-599), or is one of
         the codes that must not carry a response body (1xx, 204, 304) — this library always
-        returns one — or if `error_builder` is passed with `handle_exceptions=False`.
+        returns one — or if `error_builder` is passed with `handle_exceptions=False`, or if
+        `media_type` is not a JSON content type (`application/json` or one ending in `+json`).
     """
     if isinstance(status_code, bool) or not isinstance(status_code, int):
         raise TypeError(f"status_code must be an int, got {type(status_code).__name__}: {status_code!r}")
@@ -304,6 +311,8 @@ def override_validation_error(
         raise ValueError(
             f"status_code {status_code} does not support a response body, but this library always sends one"
         )
+    if not (media_type == "application/json" or media_type.endswith("+json")):
+        raise ValueError(f"media_type must be a JSON content type, since the body is JSON, got {media_type!r}")
 
     error_model: Any = None
     if error_builder is not None:
@@ -315,7 +324,7 @@ def override_validation_error(
         if not (isinstance(error_model, type) and hasattr(error_model, "model_json_schema")):
             raise TypeError(f"error_builder must declare a Pydantic model as its return type, got {error_model!r}")
 
-    if status_code == 422 and error_builder is None:
+    if status_code == 422 and error_builder is None and media_type == "application/json":
         return
 
     if getattr(app.state, "_validation_overridden", False):
@@ -326,7 +335,7 @@ def override_validation_error(
         @app.exception_handler(RequestValidationError)
         async def custom_validation_exception_handler(_request: Request, exc: RequestValidationError) -> JSONResponse:
             body = error_builder(exc) if error_builder is not None else {"detail": exc.errors()}
-            return JSONResponse(status_code=status_code, content=jsonable_encoder(body))
+            return JSONResponse(status_code=status_code, content=jsonable_encoder(body), media_type=media_type)
 
     target_code = str(status_code)
     original_openapi = app.openapi
@@ -340,7 +349,9 @@ def override_validation_error(
         if error_model is not None:
             # Before the model is registered, so its names don't collide with components about to go
             _drop_unreferenced_validation_components(schema)
-        _document_validation_responses(schema, operations, target_code, merge_target_response, resolve_component)
+        _document_validation_responses(
+            schema, operations, target_code, merge_target_response, resolve_component, media_type
+        )
         app.openapi_schema = schema
         return app.openapi_schema
 
