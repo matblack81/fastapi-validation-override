@@ -65,6 +65,8 @@ extra_css:
 
 nav:
   - Home: index.md
+  - Guide:
+      - Quick start: quickstart.md
   - Release notes: release-notes.md
 
 plugins:
