@@ -290,10 +290,11 @@ def override_validation_error(
         ),
     ] = True,
     error_builder: Annotated[
-        Callable[[RequestValidationError], Any] | None,
+        Callable[[Request, RequestValidationError], Any] | None,
         Doc(
-            "A function, regular or async, that turns the `RequestValidationError` into the response "
-            "body, with a Pydantic model as its return annotation. The schema documents that model "
+            "A function, regular or async, that takes the `Request` and the `RequestValidationError`, "
+            "like FastAPI's exception handlers, and returns the response body, with a Pydantic model "
+            "as its return annotation. The schema documents that model "
             "at `status_code` instead of `HTTPValidationError`, on the operations that validate "
             "input, and FastAPI's `HTTPValidationError`/`ValidationError` components are removed, "
             "unless something in the schema still references them. The built-in handler returns "
@@ -324,8 +325,9 @@ def override_validation_error(
     with different arguments. Passing `status_code=422` without `error_builder` and with the
     default `media_type` is a no-op too: the app is left unpatched, as in FastAPI.
 
-    Raises `TypeError` if `status_code` is not an `int` (a `bool` is rejected too), or if the
-    return annotation of `error_builder` is not a Pydantic model. Raises `ValueError` if
+    Raises `TypeError` if `status_code` is not an `int` (a `bool` is rejected too), or if
+    `error_builder` can't be called with the request and the exception or its return
+    annotation is not a Pydantic model. Raises `ValueError` if
     `status_code` is outside 100-599 or can't carry a body, or if `media_type` is not a JSON
     content type. Nothing is registered on the app when it raises.
     """
@@ -343,6 +345,12 @@ def override_validation_error(
 
     error_model: Any = None
     if error_builder is not None:
+        try:
+            inspect.signature(error_builder).bind(None, None)
+        except TypeError as exc:
+            raise TypeError(
+                "error_builder must take the request and the exception, like FastAPI's exception handlers"
+            ) from exc
         error_model = get_type_hints(error_builder).get("return")
         if not (isinstance(error_model, type) and hasattr(error_model, "model_json_schema")):
             raise TypeError(f"error_builder must declare a Pydantic model as its return type, got {error_model!r}")
@@ -356,8 +364,8 @@ def override_validation_error(
     if handle_exceptions:
 
         @app.exception_handler(RequestValidationError)
-        async def custom_validation_exception_handler(_request: Request, exc: RequestValidationError) -> JSONResponse:
-            body = error_builder(exc) if error_builder is not None else {"detail": exc.errors()}
+        async def custom_validation_exception_handler(request: Request, exc: RequestValidationError) -> JSONResponse:
+            body = error_builder(request, exc) if error_builder is not None else {"detail": exc.errors()}
             if inspect.isawaitable(body):
                 body = await body
             return JSONResponse(status_code=status_code, content=jsonable_encoder(body), media_type=media_type)

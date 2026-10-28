@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from pydantic import BaseModel
 
@@ -18,7 +18,9 @@ class ErrorEnvelope(BaseModel):
     errors: list[FieldError]
 
 
-def build_error(exc: RequestValidationError) -> ErrorEnvelope:
+def build_error(
+    _request: Request, exc: RequestValidationError
+) -> ErrorEnvelope:
     return ErrorEnvelope(
         errors=[
             FieldError(

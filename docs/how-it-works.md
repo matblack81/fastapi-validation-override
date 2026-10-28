@@ -12,7 +12,7 @@ Every argument is checked before anything is registered on the app:
 
 - `status_code` must be an `int`, and not a `bool`, otherwise `TypeError`. It must be between 100 and 599 and able to carry a body, so not 1xx, `204` or `304`, otherwise `ValueError`. An `int` subclass such as `http.HTTPStatus` is turned into a plain `int`.
 - `media_type` must be `application/json` or end in `+json`, otherwise `ValueError`.
-- `error_builder`, when given, must have a Pydantic model as its return annotation, otherwise `TypeError`.
+- `error_builder`, when given, must be callable with the request and the exception, and have a Pydantic model as its return annotation, otherwise `TypeError`.
 
 When a check fails, the app is left as it was.
 
@@ -25,7 +25,7 @@ The call returns without changing the app in two cases:
 
 ## 3. The exception handler
 
-With `handle_exceptions=True`, a handler for `RequestValidationError` is registered on the app. It builds the body with `error_builder(exc)`, awaiting it if the function is `async`, or as `{"detail": exc.errors()}` without one, encodes it with `fastapi.encoders.jsonable_encoder`, and returns it with `status_code` and `media_type`.
+With `handle_exceptions=True`, a handler for `RequestValidationError` is registered on the app. It builds the body with `error_builder(request, exc)`, awaiting it if the function is `async`, or as `{"detail": exc.errors()}` without one, encodes it with `fastapi.encoders.jsonable_encoder`, and returns it with `status_code` and `media_type`.
 
 With `handle_exceptions=False`, no handler is registered and `error_builder` is never called: the remaining steps only change the schema, which still documents the model of `error_builder`.
 

@@ -19,7 +19,9 @@ class ErrorEnvelope(BaseModel):
     errors: list[FieldError]
 
 
-def build_error(exc: RequestValidationError) -> ErrorEnvelope:
+def build_error(
+    _request: Request, exc: RequestValidationError
+) -> ErrorEnvelope:
     return ErrorEnvelope(
         errors=[
             FieldError(field=".".join(map(str, e["loc"])), message=e["msg"])
@@ -35,7 +37,7 @@ async def validation_handler(
 ) -> JSONResponse:
     return JSONResponse(
         status_code=400,
-        content=jsonable_encoder(build_error(exc)),
+        content=jsonable_encoder(build_error(request, exc)),
         headers={"Content-Language": "en"},
     )
 

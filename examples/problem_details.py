@@ -11,7 +11,7 @@ Run:
 
 from typing import Any
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from pydantic import BaseModel
 
@@ -30,7 +30,7 @@ class Problem(BaseModel):
     detail: str
 
 
-def build_problem(exc: RequestValidationError) -> Problem:
+def build_problem(_request: Request, exc: RequestValidationError) -> Problem:
     return Problem(title="Validation failed", status=400, detail=f"{len(exc.errors())} invalid field(s)")
 
 

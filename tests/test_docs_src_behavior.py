@@ -211,3 +211,22 @@ def test_error_builder_with_your_own_handler_sends_its_header_and_documents_the_
     assert schema["paths"]["/items"]["post"]["responses"]["400"]["content"] == {
         "application/json": {"schema": ref("ErrorEnvelope")}
     }
+
+
+def test_error_builder_reading_the_request_fills_instance() -> None:
+    with TestClient(load("options/error_builder_request").app) as client:
+        invalid = client.post("/items", json={"name": "Hammer"})
+        schema = client.get("/openapi.json").json()
+
+    assert invalid.status_code == 400
+    assert invalid.headers["content-type"] == "application/problem+json"
+    assert invalid.json() == {
+        "type": "about:blank",
+        "title": "Validation failed",
+        "status": 400,
+        "detail": "1 invalid field(s)",
+        "instance": "/items",
+    }
+    assert schema["paths"]["/items"]["post"]["responses"]["400"]["content"] == {
+        "application/problem+json": {"schema": ref("Problem")}
+    }
