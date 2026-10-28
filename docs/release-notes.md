@@ -13,6 +13,7 @@
 
 ### Docs
 
+* 📝 Document every option of the override on its own page. PR [#115](https://github.com/matblack81/fastapi-validation-override/pull/115) by [@matblack81](https://github.com/matblack81).
 * 📝 Add the home page and quick start to the documentation site. PR [#114](https://github.com/matblack81/fastapi-validation-override/pull/114) by [@matblack81](https://github.com/matblack81).
 * 📝 Publish the release notes as a page of the site. PR [#113](https://github.com/matblack81/fastapi-validation-override/pull/113) by [@matblack81](https://github.com/matblack81).
 * 👷 Build and deploy the documentation site to GitHub Pages. PR [#112](https://github.com/matblack81/fastapi-validation-override/pull/112) by [@matblack81](https://github.com/matblack81).
