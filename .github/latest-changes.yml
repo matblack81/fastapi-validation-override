@@ -1,7 +1,6 @@
 auto-labels:
   docs:
     - README.md
-    - release-notes.md
     - docs/**
     - docs_src/**
     - examples/**

@@ -36,11 +36,11 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/matblack81/fastapi-validation-override"
+Homepage = "https://fastapi-validation-override.matblack81.com/"
 Repository = "https://github.com/matblack81/fastapi-validation-override"
 Issues = "https://github.com/matblack81/fastapi-validation-override/issues"
-Documentation = "https://github.com/matblack81/fastapi-validation-override#readme"
-Changelog = "https://github.com/matblack81/fastapi-validation-override/blob/main/release-notes.md"
+Documentation = "https://fastapi-validation-override.matblack81.com/"
+Changelog = "https://fastapi-validation-override.matblack81.com/release-notes/"
 
 [dependency-groups]
 dev = [

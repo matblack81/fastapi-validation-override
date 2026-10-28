@@ -360,7 +360,7 @@ Runnable examples are in the [`examples/`](https://github.com/matblack81/fastapi
 
 ## Release Notes
 
-[RELEASE_NOTES](https://github.com/matblack81/fastapi-validation-override/blob/main/release-notes.md)
+[RELEASE_NOTES](https://github.com/matblack81/fastapi-validation-override/blob/main/docs/release-notes.md)
 
 ## License
 
