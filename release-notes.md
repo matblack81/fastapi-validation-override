@@ -4,6 +4,7 @@
 
 ### Features
 
+* ✨ Add `media_type` to send and document validation errors under any JSON content type. PR [#107](https://github.com/matblack81/fastapi-validation-override/pull/107) by [@matblack81](https://github.com/matblack81).
 * ✨ Add `error_builder` to replace the validation error body and its schema. PR [#105](https://github.com/matblack81/fastapi-validation-override/pull/105) by [@matblack81](https://github.com/matblack81).
 
 ### Fixes
