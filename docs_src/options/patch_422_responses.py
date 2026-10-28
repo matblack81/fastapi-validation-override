@@ -1,7 +1,8 @@
 from fastapi import FastAPI
 from fastapi.openapi.utils import get_openapi
-from fastapi_validation_override import patch_422_responses
 from pydantic import BaseModel
+
+from fastapi_validation_override import patch_422_responses
 
 app = FastAPI()
 
