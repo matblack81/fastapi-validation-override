@@ -27,11 +27,27 @@ The function can be regular or `async`. If it can't be called with the request a
 
 - A component with the same name and the same definition is reused: a route that also returns `ErrorEnvelope` and the validation error share one component.
 - A different component already registered under the same name is left as it is, and your model and the ones it nests are added under `FastAPIValidationOverride_`-prefixed names.
-- Models named `HTTPValidationError` and `ValidationError` take the place of FastAPI's components, under the same names.
+- Models named `HTTPValidationError` and `ValidationError` take the place of FastAPI's components, under the same names, as described in [Keeping FastAPI's names](#keeping-fastapis-names).
 
 !!! warning "A response model named `HTTPValidationError` documents FastAPI's definition"
 
     FastAPI adds its own components under the names `HTTPValidationError` and `ValidationError` after the models of the routes, so a route whose response model has one of those names documents FastAPI's definition instead of yours, with or without this library. Since that route still refers to FastAPI's component, it isn't removed, and the validation error is documented under the `FastAPIValidationOverride_` names. Give the model another name if a route returns it too.
+
+## Keeping FastAPI's names
+
+Models named `HTTPValidationError` and `ValidationError` keep the names clients generated from the schema already use, with a body of your own shape:
+
+```python
+--8<-- "docs_src/options/error_builder_fastapi_names.py:snippet"
+```
+
+A `POST /items` with `{"name": "Hammer"}` now gets `400` with:
+
+```json
+{"detail": [{"field": "body.price", "message": "Field required"}]}
+```
+
+In the schema, `HTTPValidationError` and `ValidationError` have your fields instead of FastAPI's, and the `400` refers to `HTTPValidationError` as before. A route can't also use these models as its response model: FastAPI would replace them with its own definitions.
 
 ## Reading the request
 

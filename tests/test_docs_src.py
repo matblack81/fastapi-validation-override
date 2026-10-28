@@ -65,6 +65,10 @@ SCHEMAS = snapshot(
         },
         "options/error_builder_handler": {"paths": {"/items": {"post": ["200", "400"]}}, "components": []},
         "options/error_builder_request": {"paths": {"/items": {"post": ["200", "400"]}}, "components": []},
+        "options/error_builder_fastapi_names": {
+            "paths": {"/items": {"post": ["200", "400"]}},
+            "components": ["HTTPValidationError", "ValidationError"],
+        },
     }
 )
 

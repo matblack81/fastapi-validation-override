@@ -230,3 +230,19 @@ def test_error_builder_reading_the_request_fills_instance() -> None:
     assert schema["paths"]["/items"]["post"]["responses"]["400"]["content"] == {
         "application/problem+json": {"schema": ref("Problem")}
     }
+
+
+def test_error_builder_keeping_fastapi_names_replaces_their_definitions() -> None:
+    with TestClient(load("options/error_builder_fastapi_names").app) as client:
+        invalid = client.post("/items", json={"name": "Hammer"})
+        schema = client.get("/openapi.json").json()
+
+    assert invalid.status_code == 400
+    assert invalid.json() == {"detail": [{"field": "body.price", "message": "Field required"}]}
+    components = schema["components"]["schemas"]
+    assert set(components["HTTPValidationError"]["properties"]) == {"detail"}
+    assert components["HTTPValidationError"]["properties"]["detail"]["items"] == ref("ValidationError")
+    assert set(components["ValidationError"]["properties"]) == {"field", "message"}
+    assert schema["paths"]["/items"]["post"]["responses"]["400"]["content"] == {
+        "application/json": {"schema": ref("HTTPValidationError")}
+    }
