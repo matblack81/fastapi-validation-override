@@ -50,6 +50,14 @@ repos:
         language: unsupported
         pass_filenames: false
 
+      - id: generate-readme
+        name: generate README.md from the docs
+        entry: uv run python scripts/generate_readme.py
+        language: unsupported
+        files: ^(docs/index\.md|docs/quickstart\.md|docs_src/quickstart/basic\.py|scripts/generate_readme\.py)$
+        pass_filenames: false
+        require_serial: true
+
       - id: zizmor
         name: zizmor
         language: python
