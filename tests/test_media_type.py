@@ -1,6 +1,6 @@
 import pytest
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.openapi.constants import REF_PREFIX
 from fastapi.testclient import TestClient
@@ -26,7 +26,7 @@ class OutOfStock(BaseModel):  # pragma: no cover
     item_name: str
 
 
-def build_problem(exc: RequestValidationError) -> Problem:
+def build_problem(_request: Request, exc: RequestValidationError) -> Problem:
     return Problem(title="Validation failed", status=400, detail=f"{len(exc.errors())} invalid field(s)")
 
 

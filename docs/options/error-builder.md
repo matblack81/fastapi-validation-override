@@ -4,7 +4,7 @@ description: Replace the body of the validation error with your own Pydantic mod
 
 # Error builder
 
-`error_builder` takes a function that builds the response body from the `RequestValidationError`. Its return annotation is the model the schema documents, so the body and the schema can't drift apart:
+`error_builder` takes a function that builds the response body from the request and the `RequestValidationError`, like FastAPI's exception handlers. Its return annotation is the model the schema documents, so the body and the schema can't drift apart:
 
 ```python
 --8<-- "docs_src/options/error_builder.py:snippet"
@@ -21,7 +21,7 @@ A `POST /items` with `{"name": "Hammer"}` now gets `400` with:
 
 In the schema, the `400` of `POST /items` refers to `ErrorEnvelope`, and `ErrorEnvelope` and `FieldError` are added to `components.schemas`. FastAPI's own `HTTPValidationError` and `ValidationError` components are removed, since nothing refers to them anymore. `GET /health` has no body or parameters, so it can't fail validation and gets no `400`.
 
-The function can be regular or `async`, and must have a Pydantic model as its return annotation; otherwise `override_validation_error` raises `TypeError`.
+The function can be regular or `async`. If it can't be called with the request and the exception, or its return annotation isn't a Pydantic model, `override_validation_error` raises `TypeError`.
 
 ## Names already in the schema
 
@@ -32,6 +32,26 @@ The function can be regular or `async`, and must have a Pydantic model as its re
 !!! warning "A response model named `HTTPValidationError` documents FastAPI's definition"
 
     FastAPI adds its own components under the names `HTTPValidationError` and `ValidationError` after the models of the routes, so a route whose response model has one of those names documents FastAPI's definition instead of yours, with or without this library. Since that route still refers to FastAPI's component, it isn't removed, and the validation error is documented under the `FastAPIValidationOverride_` names. Give the model another name if a route returns it too.
+
+## Reading the request
+
+The request is there for a body that depends on it. Here the function fills the `instance` member of [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457) Problem Details with the path of the request:
+
+```python
+--8<-- "docs_src/options/error_builder_request.py:snippet"
+```
+
+A `POST /items` that fails validation gets:
+
+```json
+{
+  "type": "about:blank",
+  "title": "Validation failed",
+  "status": 400,
+  "detail": "1 invalid field(s)",
+  "instance": "/items"
+}
+```
 
 ## With your own exception handler
 

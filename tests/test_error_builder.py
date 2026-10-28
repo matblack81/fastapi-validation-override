@@ -2,7 +2,7 @@ from typing import Any
 
 import pytest
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.openapi.constants import REF_PREFIX
 from fastapi.testclient import TestClient
@@ -29,7 +29,7 @@ class OutOfStock(BaseModel):  # pragma: no cover
     item_name: str
 
 
-def build_envelope(exc: RequestValidationError) -> ErrorEnvelope:
+def build_envelope(_request: Request, exc: RequestValidationError) -> ErrorEnvelope:
     return ErrorEnvelope(
         errors=[FieldError(field=".".join(map(str, error["loc"])), message=error["msg"]) for error in exc.errors()]
     )
@@ -155,7 +155,7 @@ def test_model_named_like_fastapi_components_takes_their_place() -> None:
     class HTTPValidationError(BaseModel):  # pragma: no cover
         errors: list[ValidationError]
 
-    def build(exc: RequestValidationError) -> HTTPValidationError:
+    def build(_request: Request, exc: RequestValidationError) -> HTTPValidationError:
         return HTTPValidationError(
             errors=[ValidationError(field=".".join(map(str, error["loc"]))) for error in exc.errors()]
         )
@@ -223,7 +223,7 @@ def test_self_referencing_model_is_registered_as_its_definition() -> None:
         detail: str
         causes: list["Problem"] = []
 
-    def build_problem(exc: RequestValidationError) -> Problem:
+    def build_problem(_request: Request, exc: RequestValidationError) -> Problem:
         return Problem(detail="invalid", causes=[Problem(detail=error["msg"]) for error in exc.errors()])
 
     app = FastAPI()
@@ -259,14 +259,14 @@ def test_schema_is_stable_across_openapi_calls() -> None:
     assert set(second["components"]["schemas"]) == {"Item", "ErrorEnvelope", "FieldError"}
 
 
-def no_annotation(exc):  # type: ignore[no-untyped-def]
+def no_annotation(_request, exc):  # type: ignore[no-untyped-def]
     ...
 
 
-def returns_dict(exc: RequestValidationError) -> dict[str, Any]: ...
+def returns_dict(_request: Request, exc: RequestValidationError) -> dict[str, Any]: ...
 
 
-def returns_none(exc: RequestValidationError) -> None: ...
+def returns_none(_request: Request, exc: RequestValidationError) -> None: ...
 
 
 @pytest.mark.parametrize("builder", [no_annotation, returns_dict, returns_none])
@@ -280,8 +280,8 @@ def test_builder_without_a_model_return_type_is_rejected(builder: Any) -> None:
 
 
 def test_async_builder_is_awaited() -> None:
-    async def build(exc: RequestValidationError) -> ErrorEnvelope:
-        return build_envelope(exc)
+    async def build(request: Request, exc: RequestValidationError) -> ErrorEnvelope:
+        return build_envelope(request, exc)
 
     app = FastAPI()
 
@@ -323,3 +323,49 @@ def test_builder_with_handle_exceptions_false_only_sets_the_documented_model() -
     # No handler was registered: FastAPI answers on its own, with its body, not the builder's
     assert response.status_code == 422
     assert set(response.json()) == {"detail"}
+
+
+class PathEnvelope(BaseModel):  # pragma: no cover
+    path: str
+    errors: int
+
+
+def test_builder_taking_the_request_receives_it() -> None:
+    def build(request: Request, exc: RequestValidationError) -> PathEnvelope:
+        return PathEnvelope(path=request.url.path, errors=len(exc.errors()))
+
+    app = FastAPI()
+
+    @app.post("/items")
+    async def create_item(item: Item) -> None: ...
+
+    override_validation_error(app, error_builder=build)
+
+    with TestClient(app) as client:
+        response = client.post("/items", json={})
+        schema = client.get("/openapi.json").json()
+
+    assert response.status_code == 400
+    assert response.json() == {"path": "/items", "errors": 1}
+    assert schema["paths"]["/items"]["post"]["responses"]["400"]["content"]["application/json"]["schema"] == {
+        "$ref": f"{REF_PREFIX}PathEnvelope"
+    }
+
+
+def takes_nothing() -> ErrorEnvelope: ...
+
+
+def takes_only_the_exception(exc: RequestValidationError) -> ErrorEnvelope: ...
+
+
+def takes_three(_request: Request, exc: RequestValidationError, extra: int) -> ErrorEnvelope: ...
+
+
+@pytest.mark.parametrize("builder", [takes_nothing, takes_only_the_exception, takes_three])
+def test_builder_that_cant_take_the_request_and_the_exception_is_rejected(builder: Any) -> None:
+    app = FastAPI()
+
+    with pytest.raises(TypeError, match="the request and the exception"):
+        override_validation_error(app, error_builder=builder)
+
+    assert not getattr(app.state, "_validation_overridden", False)
