@@ -12,6 +12,10 @@
 
 * 🐛 Fix HTTPStatus status codes in the OpenAPI schema on Python 3.10. PR [#104](https://github.com/matblack81/fastapi-validation-override/pull/104) by [@matblack81](https://github.com/matblack81).
 
+### Refactors
+
+* ♻️ Give `error_builder` the request and the exception. PR [#121](https://github.com/matblack81/fastapi-validation-override/pull/121) by [@matblack81](https://github.com/matblack81).
+
 ### Docs
 
 * 📝 Add screenshots of Swagger UI and ReDoc to the documentation. PR [#119](https://github.com/matblack81/fastapi-validation-override/pull/119) by [@matblack81](https://github.com/matblack81).
