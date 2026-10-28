@@ -18,6 +18,7 @@
 
 ### Internal
 
+* ⬆️ Bump fastapi from 0.141.1 to 0.162.0. PR [#109](https://github.com/matblack81/fastapi-validation-override/pull/109) by [@matblack81](https://github.com/matblack81).
 * 💡 Fix the snapshot regeneration command for new examples. PR [#103](https://github.com/matblack81/fastapi-validation-override/pull/103) by [@matblack81](https://github.com/matblack81).
 * ✅ Snapshot the response codes of every example. PR [#102](https://github.com/matblack81/fastapi-validation-override/pull/102) by [@matblack81](https://github.com/matblack81).
 * 🔥 Remove the leftover sync-pin markers from the workflows. PR [#101](https://github.com/matblack81/fastapi-validation-override/pull/101) by [@matblack81](https://github.com/matblack81).
