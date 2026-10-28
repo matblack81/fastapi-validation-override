@@ -2,6 +2,8 @@
 
 ## Latest Changes
 
+## 1.3.0 (2026-10-28)
+
 ### Features
 
 * ✨ Allow an async `error_builder` and one used with your own exception handler. PR [#120](https://github.com/matblack81/fastapi-validation-override/pull/120) by [@matblack81](https://github.com/matblack81).
