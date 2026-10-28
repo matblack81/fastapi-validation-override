@@ -13,6 +13,7 @@
 
 ### Docs
 
+* 📝 Document `media_type` in the README. PR [#108](https://github.com/matblack81/fastapi-validation-override/pull/108) by [@matblack81](https://github.com/matblack81).
 * 📝 Add the error builder section and its known limitation. PR [#106](https://github.com/matblack81/fastapi-validation-override/pull/106) by [@matblack81](https://github.com/matblack81).
 
 ### Internal
