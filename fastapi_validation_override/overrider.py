@@ -3,10 +3,11 @@ import inspect
 from collections.abc import Callable, Iterator
 from copy import deepcopy
 from functools import partial
-from typing import Any, get_type_hints
+from typing import Annotated, Any, get_type_hints
 
 import fastapi.openapi.utils as fastapi_openapi_utils
 
+from annotated_doc import Doc
 from fastapi import FastAPI, Request
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
@@ -151,11 +152,29 @@ def _drop_unreferenced_validation_components(schema: dict[str, Any]) -> None:
 
 
 def patch_422_responses(
-    schema: dict[str, Any], target_code: str, *, merge_target_response: bool = True
+    schema: Annotated[
+        dict[str, Any],
+        Doc(
+            "An OpenAPI schema produced by `fastapi.openapi.utils.get_openapi()`, such as the one "
+            "returned by `app.openapi()`."
+        ),
+    ],
+    target_code: Annotated[str, Doc('The status code to document the validation error at, e.g. `"400"`.')],
+    *,
+    merge_target_response: Annotated[
+        bool,
+        Doc(
+            "If `True`, a response already declared at `target_code` is merged with the validation "
+            "error schema using `anyOf`. If `False`, it is left untouched. A response declared as a "
+            "`$ref` is always left untouched: `get_openapi()` never produces one at a route's own "
+            "declared status code, and this module doesn't resolve `$ref`s."
+        ),
+    ] = True,
 ) -> dict[str, Any]:
     """
     Move FastAPI's 422 validation error response to `target_code`, across paths, webhooks, and
-    callbacks (recursively, for callbacks declared on any operation).
+    callbacks (recursively, for callbacks declared on any operation). Returns the same `schema`,
+    mutated in place.
 
     Designed for schemas produced by `fastapi.openapi.utils.get_openapi()` — the same generator
     `app.openapi()` uses internally. It's exposed publicly so it can be patched outside
@@ -169,16 +188,6 @@ def patch_422_responses(
     `default` with something else, FastAPI never emits its own 422 response for that operation —
     the only signal this function relies on to detect the need for validation on such a parameter.
     In that specific combination, `target_code` won't be documented.
-
-    :param schema: An OpenAPI schema dict produced by `fastapi.openapi.utils.get_openapi()`, such as
-        one returned by `app.openapi()`.
-    :param target_code: The status code to document the validation error at, e.g. `"400"`.
-    :param merge_target_response: If True (default), a response already declared at `target_code`
-        is merged with the validation error schema using `anyOf`. If False, it is left untouched.
-        A response declared as a `$ref` is always left untouched regardless of this flag:
-        `get_openapi()` never produces one at a route's own declared status code, and this module
-        doesn't resolve `$ref`s.
-    :return: The same `schema` dict, mutated in place.
     """
     operations = _remove_fastapi_422_responses(schema)
     _document_validation_responses(schema, operations, target_code, merge_target_response, _resolve_validation_ref)
@@ -257,50 +266,68 @@ def _document_validation_responses(
 
 
 def override_validation_error(
-    app: FastAPI,
-    status_code: int = 400,
-    handle_exceptions: bool = True,
-    merge_target_response: bool = True,
-    error_builder: Callable[[RequestValidationError], Any] | None = None,
-    media_type: str = "application/json",
+    app: Annotated[FastAPI, Doc("The application to patch, in place.")],
+    status_code: Annotated[
+        int,
+        Doc(
+            "The HTTP status code to use instead of 422. It must be a valid code (100-599) that "
+            "carries a response body, so 1xx, 204 and 304 are rejected. An `int` subclass such as "
+            "`http.HTTPStatus` is used as its plain value."
+        ),
+    ] = 400,
+    handle_exceptions: Annotated[
+        bool,
+        Doc(
+            "If `True`, registers an exception handler that returns `status_code` at runtime. If "
+            "`False`, only the OpenAPI schema is patched, and you handle the exception yourself."
+        ),
+    ] = True,
+    merge_target_response: Annotated[
+        bool,
+        Doc(
+            "If `True`, a response you already declared at `status_code` is merged with the "
+            "validation error schema using `anyOf`. If `False`, it is left untouched."
+        ),
+    ] = True,
+    error_builder: Annotated[
+        Callable[[RequestValidationError], Any] | None,
+        Doc(
+            "A regular (not async) function that turns the `RequestValidationError` into the "
+            "response body, with a Pydantic model as its return annotation. The handler returns what "
+            "it builds, and the schema documents that model at `status_code` instead of "
+            "`HTTPValidationError`, on the operations that validate input. FastAPI's "
+            "`HTTPValidationError`/`ValidationError` components are then removed, unless something "
+            'in the schema still references them. If `None`, the body is `{"detail": [...]}`, as '
+            "in FastAPI."
+        ),
+    ] = None,
+    media_type: Annotated[
+        str,
+        Doc(
+            'The content type of the validation error, e.g. `"application/problem+json"`. It must '
+            "be `application/json` or end in `+json`, since the body is JSON. The handler sends it, "
+            "and the schema documents the error under it. A response already declared at "
+            "`status_code` under another content type is kept alongside, not merged with `anyOf`. "
+            "With `handle_exceptions=False`, your own handler has to send it."
+        ),
+    ] = "application/json",
 ) -> None:
     """
-    Override FastAPI's default 422 validation error response with a custom status code.
+    Override FastAPI's default 422 validation error response with a custom status code, at
+    runtime and in the OpenAPI schema.
 
-    Cache management is intentionally delegated to the original `app.openapi` so that
-    any custom OpenAPI function already set by the developer is fully preserved.
+    The schema is patched on top of whatever the current `app.openapi` returns, so a custom
+    OpenAPI function assigned before this call is preserved, and its caching with it.
 
     The first call configures the app. Subsequent calls on the same instance are ignored, even
-    with different arguments. Dynamic reconfiguration is not supported.
+    with different arguments. Passing `status_code=422` without `error_builder` and with the
+    default `media_type` is a no-op too: the app is left unpatched, as in FastAPI.
 
-    :param app: The FastAPI application instance to patch.
-    :param status_code: The HTTP status code to use instead of 422. Defaults to 400. Passing 422
-        without `error_builder` and with the default `media_type` is a no-op: the app is left
-        completely unpatched, matching FastAPI's own default.
-    :param handle_exceptions: If True, registers an exception handler that returns the custom
-        status code at runtime. Set to False to patch only the OpenAPI schema and
-        handle the exception yourself.
-    :param merge_target_response: If True (default), a response you already declared at
-        `status_code` is merged with the validation error schema using `anyOf`. If False,
-        it is left untouched.
-    :param error_builder: A regular (not async) function that turns the `RequestValidationError`
-        into the response body, annotated with a Pydantic model as its return type. The handler
-        returns what it builds, and the schema documents that model at `status_code` instead of
-        `HTTPValidationError`, on the operations that validate input. FastAPI's
-        `HTTPValidationError`/`ValidationError` components are then removed, unless something in
-        the schema still references them.
-    :param media_type: The content type of the validation error, e.g. `"application/problem+json"`.
-        The handler sends it, and the schema documents the error under it. A response already
-        declared at `status_code` under another content type is kept alongside, not merged with
-        `anyOf`. With `handle_exceptions=False`, your own handler has to send it.
-    :return: None. `app` is patched in place.
-    :raises TypeError: If `status_code` is not an `int` (a `bool` is also rejected, since it's
-        technically an `int` subclass in Python), or if `error_builder` is async or its return
-        annotation is not a Pydantic model.
-    :raises ValueError: If `status_code` is not a valid HTTP status code (100-599), or is one of
-        the codes that must not carry a response body (1xx, 204, 304) — this library always
-        returns one — or if `error_builder` is passed with `handle_exceptions=False`, or if
-        `media_type` is not a JSON content type (`application/json` or one ending in `+json`).
+    Raises `TypeError` if `status_code` is not an `int` (a `bool` is rejected too), or if
+    `error_builder` is async or its return annotation is not a Pydantic model. Raises
+    `ValueError` if `status_code` is outside 100-599 or can't carry a body, if `media_type` is
+    not a JSON content type, or if `error_builder` is passed with `handle_exceptions=False`.
+    Nothing is registered on the app when it raises.
     """
     if isinstance(status_code, bool) or not isinstance(status_code, int):
         raise TypeError(f"status_code must be an int, got {type(status_code).__name__}: {status_code!r}")
