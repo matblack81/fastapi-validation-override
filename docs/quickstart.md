@@ -40,3 +40,7 @@ The validation error is then sent and documented at `409`. Codes from 100 to 599
 ## Where to call it
 
 Call it once, when you build the app. Routes added after the call are covered too: the exception handler applies to the whole app, and the schema is patched every time FastAPI generates it. A second call on the same app is ignored, even with different arguments.
+
+## Next
+
+The [options](options/index.md) change the body, its content type, and how the validation error combines with responses your routes already declare.

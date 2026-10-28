@@ -23,13 +23,13 @@ A `POST /items` with an invalid body now gets `400 Bad Request`, with the same `
 
 | Parameter | Default | What it changes |
 |---|---|---|
-| `status_code` | `400` | The status code of the validation error, in the response and in the schema |
-| `error_builder` | `None` | The body of the error, built from your own Pydantic model, which the schema documents too |
-| `media_type` | `"application/json"` | The content type of the error, e.g. `application/problem+json` for RFC 9457 Problem Details |
-| `merge_target_response` | `True` | Whether a response the route already declares at the same code is merged with the validation error |
-| `handle_exceptions` | `True` | Whether the response comes from the built-in handler or from yours |
+| [`status_code`](quickstart.md#another-status-code) | `400` | The status code of the validation error, in the response and in the schema |
+| [`error_builder`](options/error-builder.md) | `None` | The body of the error, built from your own Pydantic model, which the schema documents too |
+| [`media_type`](options/media-type.md) | `"application/json"` | The content type of the error, e.g. `application/problem+json` for RFC 9457 Problem Details |
+| [`merge_target_response`](options/merge-target-response.md) | `True` | Whether a response the route already declares at the same code is merged with the validation error |
+| [`handle_exceptions`](options/handle-exceptions.md) | `True` | Whether the response comes from the built-in handler or from yours |
 
-The schema is patched across paths, webhooks and callbacks, on top of any custom `app.openapi` function you already have.
+The schema is patched across paths, [webhooks and callbacks](options/webhooks-and-callbacks.md), on top of any [custom `app.openapi`](options/custom-openapi.md) function you already have.
 
 ## Requirements
 

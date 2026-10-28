@@ -26,6 +26,43 @@ SCHEMAS = snapshot(
             "paths": {"/items": {"post": ["200", "409"]}},
             "components": ["HTTPValidationError", "ValidationError"],
         },
+        "options/custom_422": {
+            "paths": {"/items": {"post": ["200", "400", "422"]}},
+            "components": ["HTTPValidationError", "ValidationError"],
+        },
+        "options/custom_openapi": {
+            "paths": {"/items": {"post": ["200", "400"]}},
+            "components": ["HTTPValidationError", "ValidationError"],
+        },
+        "options/error_builder": {
+            "paths": {"/items": {"post": ["200", "400"]}, "/health": {"get": ["200"]}},
+            "components": [],
+        },
+        "options/exception_handler": {
+            "paths": {"/items": {"post": ["200", "400"]}},
+            "components": ["HTTPValidationError", "ValidationError"],
+        },
+        "options/media_type": {"paths": {"/orders": {"post": ["200", "400"]}}, "components": []},
+        "options/merging": {
+            "paths": {"/items": {"post": ["200", "400"]}},
+            "components": ["HTTPValidationError", "ValidationError"],
+        },
+        "options/merging_disabled": {
+            "paths": {"/items": {"post": ["200", "400"]}},
+            "components": ["HTTPValidationError", "ValidationError"],
+        },
+        "options/patch_422_responses": {
+            "paths": {"/items": {"post": ["200", "422"]}},
+            "components": ["HTTPValidationError", "ValidationError"],
+        },
+        "options/sub_app": {
+            "paths": {"/items": {"post": ["200", "422"]}},
+            "components": ["HTTPValidationError", "ValidationError"],
+        },
+        "options/webhooks_and_callbacks": {
+            "paths": {"/items": {"post": ["200", "400"]}},
+            "components": ["HTTPValidationError", "ValidationError"],
+        },
     }
 )
 
