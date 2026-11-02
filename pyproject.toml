@@ -13,12 +13,21 @@ requires-python = ">=3.10"
 authors = [
     { name = "Matteo Nieddu", email = "mat81black@gmail.com" }
 ]
+keywords = [
+    "fastapi",
+    "validation",
+    "error-handling",
+    "http-status-code",
+    "openapi",
+    "swagger",
+    "redoc",
+    "rest-api",
+]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Environment :: Web Environment",
     "Framework :: FastAPI",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3.10",
