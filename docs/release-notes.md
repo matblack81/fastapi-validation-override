@@ -2,6 +2,8 @@
 
 ## Latest Changes
 
+## 1.3.2 (2026-11-02)
+
 ### Internal
 
 * 🔧 Add keywords to the package metadata and drop the license classifier. PR [#136](https://github.com/matblack81/fastapi-validation-override/pull/136) by [@matblack81](https://github.com/matblack81).
