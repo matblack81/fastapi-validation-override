@@ -4,6 +4,7 @@
 
 ### Internal
 
+* 🔧 Add keywords to the package metadata and drop the license classifier. PR [#136](https://github.com/matblack81/fastapi-validation-override/pull/136) by [@matblack81](https://github.com/matblack81).
 * 🐛 Fix re-runs of the Deploy Docs workflow. PR [#135](https://github.com/matblack81/fastapi-validation-override/pull/135) by [@matblack81](https://github.com/matblack81).
 
 ## 1.3.1 (2026-11-02)
