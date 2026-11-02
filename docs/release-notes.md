@@ -4,6 +4,7 @@
 
 ### Internal
 
+* ⬆ Bump ty from 0.0.91 to 0.0.92 in the python-packages group across 1 directory. PR [#132](https://github.com/matblack81/fastapi-validation-override/pull/132) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump the python-packages group with 2 updates. PR [#130](https://github.com/matblack81/fastapi-validation-override/pull/130) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * ⬆ Bump the github-actions group with 2 updates. PR [#129](https://github.com/matblack81/fastapi-validation-override/pull/129) by [@dependabot[bot]](https://github.com/apps/dependabot).
 * 🐛 Fix the pre-commit hooks bump workflow after the prek command rename. PR [#131](https://github.com/matblack81/fastapi-validation-override/pull/131) by [@matblack81](https://github.com/matblack81).
