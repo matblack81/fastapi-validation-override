@@ -2,6 +2,8 @@
 
 ## Latest Changes
 
+## 1.3.1 (2026-11-02)
+
 ### Internal
 
 * ⬆ Bump pre-commit hooks. PR [#133](https://github.com/matblack81/fastapi-validation-override/pull/133) by [@matblack81](https://github.com/matblack81).
