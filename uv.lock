@@ -366,7 +366,7 @@ dev = [
     { name = "mypy", specifier = ">=1.17.0" },
     { name = "pillow", marker = "python_full_version >= '3.11'", specifier = ">=13.0.0" },
     { name = "playwright", specifier = ">=1.49.0" },
-    { name = "prek", specifier = ">=0.2.22" },
+    { name = "prek", specifier = ">=0.4.7" },
     { name = "pyrefly", specifier = ">=0.60.0" },
     { name = "pytest", specifier = ">=9.1.0" },
     { name = "ruff", specifier = ">=0.14.0" },
