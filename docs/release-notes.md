@@ -2,6 +2,10 @@
 
 ## Latest Changes
 
+### Internal
+
+* 🐛 Fix re-runs of the Deploy Docs workflow. PR [#135](https://github.com/matblack81/fastapi-validation-override/pull/135) by [@matblack81](https://github.com/matblack81).
+
 ## 1.3.1 (2026-11-02)
 
 ### Internal
