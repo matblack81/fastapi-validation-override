@@ -2,6 +2,10 @@
 
 ## Latest Changes
 
+### Internal
+
+* ⬆ Bump opentelemetry-api from 1.45.1 to 1.45.2. PR [#138](https://github.com/matblack81/fastapi-validation-override/pull/138) by [@dependabot[bot]](https://github.com/apps/dependabot).
+
 ## 1.3.2 (2026-11-02)
 
 ### Internal
